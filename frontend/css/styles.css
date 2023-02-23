@@ -1,0 +1,36 @@
+.logo {
+    margin-top: revert !important;
+}
+
+.header-layout {
+    margin-right: 15px;
+    height: 80px;
+}
+
+.vaadin-grid-links:hover {
+    color: #005FDB;
+    font-weight: bold;
+    background-color : var(--lumo-primary-color-10pct);
+}
+
+:host([theme~="menu-vertical"]) [part="container"] {
+    flex-direction: column;
+}
+
+.centered-text {
+    text-align: center;
+}
+
+.contacts-image {
+    border: 1px solid black;
+    margin-bottom: 30px;
+}
+
+.album-photos {
+    width: 100%;
+    height: 100vh;
+    border:none;
+    margin:0;
+    padding:0;z-index:999999;
+}
+
