@@ -12,11 +12,15 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -38,6 +42,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
     private DiskService diskService;
     private UserService userService;
 
+    private Dialog dialog;
     private ComboBox<DiskGenreDTO> genreCombo;
     private ComboBox<DiskStyleDTO> styleCombo;
     private ComboBox<UserDTO> collectionOfCombo;
@@ -55,6 +60,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         Image logo = new Image();
         logo.setSrc("images/stereo.png");
         logo.setWidth("13%");
+        dialog = new Dialog(); dialog.setWidth("80%"); dialog.setMaxHeight("80%");
         collectionOfCombo = new ComboBox<>(); collectionOfCombo.setWidth("100%");
         titleField = new TextField(); titleField.setWidth("100%");
         authorField = new TextField(); authorField.setWidth("100%");
@@ -65,6 +71,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         styleCombo.setClearButtonVisible(true);
         Button searchButton = new Button(Constants.SEARCH); searchButton.setWidth("100%");
         Button clearButton = new Button(Constants.CLEAR); clearButton.setWidth("100%");
+        Button addButton = new Button(new Icon(VaadinIcon.PLUS));
         searchButton.addClickListener(this::search);
         clearButton.addClickListener(this::clear);
         collectionOfCombo.setPlaceholder(Constants.COLLECTION_OF_PLACEHOLDER);
@@ -72,7 +79,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         authorField.setPlaceholder(Constants.AUTHOR_SEARCH_PLACEHOLDER);
         genreCombo.setPlaceholder(Constants.GENRE_PLACEHOLDER);
         styleCombo.setPlaceholder(Constants.STYLE_PLACEHOLDER);
-        HorizontalLayout hl0 = new HorizontalLayout(clearButton, searchButton);
+        HorizontalLayout hl0 = new HorizontalLayout(clearButton, searchButton, addButton);
         HorizontalLayout hl1 = new HorizontalLayout(collectionOfCombo, genreCombo, styleCombo);
         HorizontalLayout hl2 = new HorizontalLayout(titleField, authorField, hl0);
         hl0.setWidth("100%"); hl1.setWidth("100%"); hl2.setWidth("100%");
@@ -89,7 +96,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         grid.setAllRowsVisible(true);
         grid.addColumn(createAlbumRenderer());
         grid.setVisible(false);
-        add(title, logo, hl1, hl2, totalDiskLabel, partialValueLabel, totalValueLabel, grid);
+        add(title, logo, hl1, hl2, totalDiskLabel, partialValueLabel, totalValueLabel, grid, dialog);
         setHorizontalComponentAlignment(Alignment.CENTER, title, logo);
         fillCombos();
         setSizeFull();
@@ -167,6 +174,16 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
 
     @Override
     public void onComponentEvent(ItemClickEvent<DiskDTO> diskDTOItemClickEvent) {
-
+        dialog.removeAll();
+        dialog.getFooter().removeAll();
+        DiskDTO diskDTO = diskDTOItemClickEvent.getItem();
+        dialog.setHeaderTitle(Constants.DETAIL);
+        VerticalLayout dialogLayout = new DiskCRUDView(Constants.FORM_UPDATE, diskDTO);
+        dialog.add(dialogLayout);
+        Button saveButton = new Button(Constants.SAVE, e -> diskService.update(diskDTO));
+        Button cancelButton = new Button(Constants.CANCEL, e -> dialog.close());
+        dialog.getFooter().add(cancelButton);
+        dialog.getFooter().add(saveButton);
+        dialog.open();
     }
 }

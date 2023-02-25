@@ -52,7 +52,7 @@ public interface DiskRepository extends JpaRepository<DiskEntity, Integer> {
             "\tdisk.disk_status\n" +
             "from disks as disk\n" +
             "\tleft join disk_style_list as dsl on dsl.disk_id = disk.id\n" +
-            "where disk.title like concat('%', :title, '%') and disk.author like concat('%', ':author', '%') and dsl.style_id = :diskStyleEntity and disk.user_id = :userId" +
+            "where disk.title like concat('%', :title, '%') and disk.author like concat('%', :author, '%') and dsl.style_id = :diskStyleEntity and disk.user_id = :userId" +
             "\n", nativeQuery = true)
     List<DiskEntity> search(String title, String author, DiskStyleEntity diskStyleEntity, Integer userId);
 

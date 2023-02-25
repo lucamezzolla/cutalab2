@@ -155,4 +155,6 @@ public class DiskDTO {
     public void setCover(String cover) {
         this.cover = cover;
     }
+
+
 }

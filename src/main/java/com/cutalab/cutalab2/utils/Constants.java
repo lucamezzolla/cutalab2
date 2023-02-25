@@ -22,6 +22,8 @@ public class Constants {
     public static final String MENU_DASHBOARDS_DISKS = "Gestione dischi";
     public static final String MENU_DASHBOARDS_MAGICABULA = "Gestione magicabula";
 
+    public static final Integer FORM_CREATE = 1;
+    public static final Integer FORM_UPDATE = 2;
 
 
     //AMMINISTRAZIONE
@@ -36,6 +38,7 @@ public class Constants {
     public static final String CANCEL = "Annulla";
     public static final String SEARCH = "Cerca";
     public static final String CLEAR = "Pulisci";
+    public static final String DETAIL = "Dettaglio";
 
 
     //GESTIONALE DISCHI
@@ -46,6 +49,25 @@ public class Constants {
     public static final String STYLE_PLACEHOLDER = "Seleziona uno stile...";
     public static final String GRID_DISKS_COL_1 = "Album";
     public static final String NO_DISKS = "Nessun disco è stato trovato in base ai parametri di ricerca.";
+    public static final String FORM_TITLE_PLACEHOLDER = "Titolo";
+    public static final String FORM_AUTHOR_PLACEHOLDER = "Autore";
+    public static final String FORM_GENRE_PLACEHOLDER = "Genere";
+    public static final String FORM_STYLE_PLACEHOLDER = "Stile";
+
+    public static final String DISK_DETAIL_OPENABLE = "Apribile?";
+    public static final String DISK_DETAIL_COVER = "Copertina";
+    public static final String DISK_DETAIL_TITLE = "Titolo";
+    public static final String DISK_DETAIL_AUTHOR = "Autore";
+    public static final String DISK_DETAIL_LABEL = "Etichetta";
+    public static final String DISK_DETAIL_REPRINT = "Ristampa";
+    public static final String DISK_DETAIL_VALUE = "Valore presunto";
+    public static final String DISK_DETAIL_YEAR = "Anno";
+    public static final String DISK_DETAIL_DISK_STATUS = "Stato del disco";
+    public static final String DISK_DETAIL_COVER_STATUS = "Stato della copertina";
+    public static final String DISK_DETAIL_NOTE = "Note aggiuntive";
+    public static final String DISK_DETAIL_GENRE = "Generi";
+    public static final String DISK_DETAIL_STYLE = "Stili";
+
 
 
     //**************************************************************************************************************
