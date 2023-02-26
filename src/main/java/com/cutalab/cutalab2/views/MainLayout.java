@@ -29,6 +29,7 @@ import com.vaadin.flow.router.RouterLink;
 @CssImport(themeFor = "vaadin-menu-bar", value = "/css/styles.css")
 public class MainLayout extends AppLayout {
 
+    private StatusService statusService;
     private MomentService momentService;
     private LinkService linkService;
     private AreaLinkService areaLinkService;
@@ -38,12 +39,14 @@ public class MainLayout extends AppLayout {
     private boolean isLogged = false;
 
     public MainLayout(
+            StatusService statusService,
             UserService userService,
             MomentService momentService,
             LinkService linkService,
             AreaLinkService areaLinkService,
             SecurityService securityService,
             DiskService diskService) {
+        this.statusService = statusService;
         this.userService = userService;
         this.momentService = momentService;
         this.linkService = linkService;
@@ -84,7 +87,7 @@ public class MainLayout extends AppLayout {
                 this.setContent(new AdminView(linkService, areaLinkService));
             });
             MenuItem dashboardsItem = menuBar.addItem(Constants.MENU_DASHBOARDS, menuItemClickEvent -> {
-                this.setContent(new DashboardView(userService, diskService));
+                this.setContent(new DashboardView(statusService, userService, diskService));
             });
         }
 

@@ -1,57 +1,47 @@
 package com.cutalab.cutalab2.views.dashboards.disks;
 
 import com.cutalab.cutalab2.backend.dto.dashboards.disks.DiskDTO;
+import com.cutalab.cutalab2.backend.dto.dashboards.disks.StatusDTO;
+import com.cutalab.cutalab2.backend.service.StatusService;
 import com.cutalab.cutalab2.utils.Constants;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.LitRenderer;
-import com.vaadin.flow.data.renderer.Renderer;
+import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class DiskCRUDView extends VerticalLayout {
 
+    private StatusService statusService;
+
     private Integer formType;
     private DiskDTO diskDTO;
-    private Grid<DiskDTO> grid;
-    private TextField titleField, authorField;
-    private Label genreLabel, styleLabel;
+    private List<HorizontalLayout> layouts;
 
-
-    public DiskCRUDView(Integer formType, DiskDTO diskDTO) {
+    public DiskCRUDView(StatusService statusService, Integer formType, DiskDTO diskDTO) {
+        this.statusService = statusService;
         this.formType = formType;
         this.diskDTO = diskDTO;
-        titleField = new TextField();
-        authorField = new TextField();
-        genreLabel = new Label();
-        styleLabel = new Label();
-        titleField.setPlaceholder(Constants.FORM_TITLE_PLACEHOLDER);
-        authorField.setPlaceholder(Constants.FORM_AUTHOR_PLACEHOLDER);
-        genreLabel.setText(Constants.FORM_GENRE_PLACEHOLDER);
-        styleLabel.setText(Constants.FORM_STYLE_PLACEHOLDER);
-        /*
-        grid = new Grid<>(DiskDTO.class, false);
-        grid.setSelectionMode(Grid.SelectionMode.NONE);
-        grid.addColumn(createLabelRenderer()).setAutoWidth(true).setFlexGrow(0);;
-        grid.addColumn(createValueRenderer()).setAutoWidth(true).setFlexGrow(0);;
-        grid.setWidth("100%");
-        grid.setAllRowsVisible(true);
-        grid.setItems(diskDTO);
-        add(grid);
-        */
-        List<HorizontalLayout> layouts = createLayouts();
+        if(formType.equals(Constants.FORM_CREATE)) {
+
+        } else if(formType.equals(Constants.FORM_UPDATE)) {
+            layouts = updateLayouts();
+        } else if(formType.equals(Constants.FORM_READ)) {
+            layouts = createLayouts();
+        }
         for(HorizontalLayout hl : layouts) {
             add(hl);
         }
-
     }
 
     private List<HorizontalLayout> createLayouts() {
@@ -101,6 +91,67 @@ public class DiskCRUDView extends VerticalLayout {
             retval.add(hl);
         }
         return retval;
+    }
+
+    private List<HorizontalLayout> updateLayouts() {
+        List<HorizontalLayout> retval = new ArrayList<>();
+        Checkbox openable = new Checkbox(); openable.setValue(diskDTO.isOpenable());
+        TextField titleField = new TextField(); titleField.setWidth("100%"); titleField.setValue(diskDTO.getTitle());
+        TextField authorField = new TextField(); authorField.setWidth("100%"); authorField.setValue(diskDTO.getAuthor());
+        TextField labelField = new TextField(); labelField.setWidth("100%"); labelField.setValue(diskDTO.getLabel());
+        TextField reprintField = new TextField(); reprintField.setWidth("100%"); reprintField.setValue(diskDTO.getReprint());
+        TextField valueField = new TextField(); valueField.setWidth("100%"); valueField.setValue(String.valueOf(diskDTO.getPresumedValue()));
+        TextField yearField = new TextField(); yearField.setWidth("100%"); yearField.setValue(diskDTO.getYear());
+        ComboBox<StatusDTO> diskStatus = new ComboBox<>();
+        ComboBox<StatusDTO> coverStatus = new ComboBox<>();
+        diskStatus.setItems(statusService.findAll());
+        coverStatus.setItems(statusService.findAll());
+        diskStatus.setWidth("100%"); diskStatus.setValue(diskDTO.getDiskStatus());
+        coverStatus.setWidth("100%"); coverStatus.setValue(diskDTO.getCoverStatus());
+        TextArea notesArea = new TextArea(); notesArea.setWidth("100%"); notesArea.setValue(diskDTO.getNote());
+        Button genreListButton = new Button(Constants.DISK_EDIT_GENRE);
+        Button styleListButton = new Button(Constants.DISK_EDIT_STYLE);
+        genreListButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        styleListButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        HorizontalLayout genreStyleLayout = new HorizontalLayout(genreListButton, styleListButton);
+        LinkedHashMap<String, Component> map = new LinkedHashMap<>();
+        map.put(Constants.DISK_DETAIL_OPENABLE, openable);
+        map.put(Constants.DISK_DETAIL_TITLE, titleField);
+        map.put(Constants.DISK_DETAIL_AUTHOR, authorField);
+        map.put(Constants.DISK_DETAIL_LABEL, labelField);
+        map.put(Constants.DISK_DETAIL_REPRINT, reprintField);
+        map.put(Constants.DISK_DETAIL_VALUE, valueField);
+        map.put(Constants.DISK_DETAIL_YEAR, yearField);
+        map.put(Constants.DISK_DETAIL_DISK_STATUS, diskStatus);
+        map.put(Constants.DISK_DETAIL_COVER_STATUS, coverStatus);
+        map.put(Constants.DISK_DETAIL_NOTE, notesArea);
+        map.put("", genreStyleLayout);
+        for (String key : map.keySet()) {
+            Html keyText = new Html("<b>"+key+"</b>");
+            keyText.getElement().getStyle().set("width", "15%");
+            Component component = map.get(key);
+            component.getElement().getStyle().set("width", "85%");
+            HorizontalLayout hl = new HorizontalLayout(keyText, component);
+            hl.setWidth("100%");
+            retval.add(hl);
+        }
+        return retval;
+    }
+
+    public DiskDTO getDiskDTO() {
+        DiskDTO newDiskDTO = new DiskDTO();
+        BeanUtils.copyProperties(diskDTO, newDiskDTO);
+        newDiskDTO.setOpenable(((Checkbox) layouts.get(0).getComponentAt(1)).getValue());
+        newDiskDTO.setTitle(((TextField) layouts.get(1).getComponentAt(1)).getValue());
+        newDiskDTO.setAuthor(((TextField) layouts.get(2).getComponentAt(1)).getValue());
+        newDiskDTO.setLabel(((TextField) layouts.get(3).getComponentAt(1)).getValue());
+        newDiskDTO.setReprint(((TextField) layouts.get(4).getComponentAt(1)).getValue());
+        newDiskDTO.setPresumedValue(BigDecimal.valueOf(Double.parseDouble(((TextField) layouts.get(5).getComponentAt(1)).getValue())));
+        newDiskDTO.setYear(((TextField) layouts.get(6).getComponentAt(1)).getValue());
+        newDiskDTO.setDiskStatus(((ComboBox<StatusDTO>) layouts.get(7).getComponentAt(1)).getValue());
+        newDiskDTO.setCoverStatus(((ComboBox<StatusDTO>) layouts.get(8).getComponentAt(1)).getValue());
+        newDiskDTO.setNote(((TextArea) layouts.get(9).getComponentAt(1)).getValue());
+        return newDiskDTO;
     }
 
 }

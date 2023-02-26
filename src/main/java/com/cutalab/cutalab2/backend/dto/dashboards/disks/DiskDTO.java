@@ -156,5 +156,24 @@ public class DiskDTO {
         this.cover = cover;
     }
 
-
+    @Override
+    public String toString() {
+        return "DiskDTO{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", year='" + year + '\'' +
+                ", reprint='" + reprint + '\'' +
+                ", label='" + label + '\'' +
+                ", presumedValue=" + presumedValue +
+                ", openable=" + openable +
+                ", diskGenreList=" + diskGenreList +
+                ", diskStyleList=" + diskStyleList +
+                ", coverStatus=" + coverStatus +
+                ", diskStatus=" + diskStatus +
+                ", userId=" + userId +
+                ", note='" + note + '\'' +
+                ", cover='" + cover + '\'' +
+                '}';
+    }
 }

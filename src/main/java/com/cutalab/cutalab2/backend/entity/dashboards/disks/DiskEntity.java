@@ -222,4 +222,24 @@ public class DiskEntity implements Serializable {
         return Objects.hash(getId(), getTitle());
     }
 
+    @Override
+    public String toString() {
+        return "DiskEntity{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", year='" + year + '\'' +
+                ", reprint='" + reprint + '\'' +
+                ", label='" + label + '\'' +
+                ", presumedValue=" + presumedValue +
+                ", openable=" + openable +
+                ", diskGenreList=" + diskGenreList +
+                ", diskStyleList=" + diskStyleList +
+                ", coverStatus=" + coverStatus +
+                ", diskStatus=" + diskStatus +
+                ", userId=" + userId +
+                ", note='" + note + '\'' +
+                ", cover='" + cover + '\'' +
+                '}';
+    }
 }

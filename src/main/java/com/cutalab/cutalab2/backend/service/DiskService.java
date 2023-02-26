@@ -1,6 +1,5 @@
 package com.cutalab.cutalab2.backend.service;
 
-import ch.qos.logback.classic.jmx.MBeanUtil;
 import com.cutalab.cutalab2.backend.dto.UserDTO;
 import com.cutalab.cutalab2.backend.dto.dashboards.disks.DiskDTO;
 import com.cutalab.cutalab2.backend.dto.dashboards.disks.DiskGenreDTO;
@@ -9,6 +8,7 @@ import com.cutalab.cutalab2.backend.dto.dashboards.disks.StatusDTO;
 import com.cutalab.cutalab2.backend.entity.dashboards.disks.DiskEntity;
 import com.cutalab.cutalab2.backend.entity.dashboards.disks.DiskGenreEntity;
 import com.cutalab.cutalab2.backend.entity.dashboards.disks.DiskStyleEntity;
+import com.cutalab.cutalab2.backend.entity.dashboards.disks.StatusEntity;
 import com.cutalab.cutalab2.backend.repository.DiskGenreRepository;
 import com.cutalab.cutalab2.backend.repository.DiskRepository;
 import com.cutalab.cutalab2.backend.repository.DiskStyleRepository;
@@ -108,6 +108,35 @@ public class DiskService {
         return list2;
     }
 
+    public DiskDTO findByID(Integer id) {
+        DiskDTO diskDTO = new DiskDTO();
+        DiskEntity diskEntity = diskRepository.getReferenceById(id);
+        BeanUtils.copyProperties(diskEntity, diskDTO);
+        StatusDTO statusDTO1 = new StatusDTO();
+        StatusDTO statusDTO2 = new StatusDTO();
+        List<DiskGenreDTO> listGenreDTO = new ArrayList<>();
+        List<DiskStyleDTO> listStyleDTO = new ArrayList<>();
+        BeanUtils.copyProperties(diskEntity.getDiskStatus(), statusDTO1);
+        BeanUtils.copyProperties(diskEntity.getCoverStatus(), statusDTO2);
+        Iterator iterator1 = diskEntity.getDiskGenreList().iterator();
+        while(iterator1.hasNext()) {
+            DiskGenreDTO dto = new DiskGenreDTO();
+            BeanUtils.copyProperties(iterator1.next(), dto);
+            listGenreDTO.add(dto);
+        }
+        Iterator iterator2 = diskEntity.getDiskStyleList().iterator();
+        while(iterator2.hasNext()) {
+            DiskStyleDTO dto = new DiskStyleDTO();
+            BeanUtils.copyProperties(iterator2.next(), dto);
+            listStyleDTO.add(dto);
+        }
+        diskDTO.setDiskStatus(statusDTO1);
+        diskDTO.setCoverStatus(statusDTO2);
+        diskDTO.setDiskGenreList(listGenreDTO);
+        diskDTO.setDiskStyleList(listStyleDTO);
+        return diskDTO;
+    }
+
     public BigDecimal totalValue(UserDTO userDTO) {
         return diskRepository.totalValue(userDTO.getId());
     }
@@ -116,13 +145,37 @@ public class DiskService {
         return diskRepository.count(userDTO.getId());
     }
 
-    public DiskDTO update(DiskDTO diskDTO) {
+    public void update(DiskDTO diskDTO) {
         DiskEntity diskEntity = new DiskEntity();
-        BeanUtils.copyProperties(diskEntity, diskDTO);
-        DiskEntity newDiskEntity = diskRepository.saveAndFlush(diskEntity);
-        DiskDTO newDiskDTO = new DiskDTO();
-        BeanUtils.copyProperties(newDiskDTO, newDiskDTO);
-        return newDiskDTO;
+        BeanUtils.copyProperties(diskDTO, diskEntity);
+        StatusEntity status1 = new StatusEntity();
+        StatusEntity status2 = new StatusEntity();
+        List<DiskGenreEntity> listGenreEntity = new ArrayList<>();
+        List<DiskStyleEntity> listStyleEntity = new ArrayList<>();
+        BeanUtils.copyProperties(diskDTO.getDiskStatus(), status1);
+        BeanUtils.copyProperties(diskDTO.getCoverStatus(), status2);
+        Iterator iterator1 = diskDTO.getDiskGenreList().iterator();
+        while(iterator1.hasNext()) {
+            DiskGenreEntity genreEntity = new DiskGenreEntity();
+            BeanUtils.copyProperties(iterator1.next(), genreEntity);
+            listGenreEntity.add(genreEntity);
+        }
+        Iterator iterator2 = diskDTO.getDiskStyleList().iterator();
+        while(iterator2.hasNext()) {
+            DiskStyleEntity styleEntity = new DiskStyleEntity();
+            BeanUtils.copyProperties(iterator2.next(), styleEntity);
+            listStyleEntity.add(styleEntity);
+        }
+        diskEntity.setDiskStatus(status1);
+        diskEntity.setCoverStatus(status2);
+        diskEntity.setDiskGenreList(listGenreEntity);
+        diskEntity.setDiskStyleList(listStyleEntity);
+        System.out.println("********************************************* ENTITY: "+diskEntity);
+        diskRepository.saveAndFlush(diskEntity);
+    }
+
+    public void remove(DiskDTO diskDTO) {
+        diskRepository.deleteById(diskDTO.getId());
     }
 
 }

@@ -24,6 +24,8 @@ public class Constants {
 
     public static final Integer FORM_CREATE = 1;
     public static final Integer FORM_UPDATE = 2;
+    public static final Integer FORM_READ = 3;
+    public static final Integer FORM_DELETE = 4;
 
 
     //AMMINISTRAZIONE
@@ -47,13 +49,7 @@ public class Constants {
     public static final String AUTHOR_SEARCH_PLACEHOLDER = "Cerca per autore...";
     public static final String GENRE_PLACEHOLDER = "Seleziona un genere...";
     public static final String STYLE_PLACEHOLDER = "Seleziona uno stile...";
-    public static final String GRID_DISKS_COL_1 = "Album";
     public static final String NO_DISKS = "Nessun disco è stato trovato in base ai parametri di ricerca.";
-    public static final String FORM_TITLE_PLACEHOLDER = "Titolo";
-    public static final String FORM_AUTHOR_PLACEHOLDER = "Autore";
-    public static final String FORM_GENRE_PLACEHOLDER = "Genere";
-    public static final String FORM_STYLE_PLACEHOLDER = "Stile";
-
     public static final String DISK_DETAIL_OPENABLE = "Apribile?";
     public static final String DISK_DETAIL_COVER = "Copertina";
     public static final String DISK_DETAIL_TITLE = "Titolo";
@@ -67,8 +63,9 @@ public class Constants {
     public static final String DISK_DETAIL_NOTE = "Note aggiuntive";
     public static final String DISK_DETAIL_GENRE = "Generi";
     public static final String DISK_DETAIL_STYLE = "Stili";
-
-
+    public static final String DISK_EDIT_GENRE = "Modifica generi";
+    public static final String DISK_EDIT_STYLE = "Modifica stili";
+    public static final String DISK_REMOVE_CONFIRMATION = "Sei sicuro di rimovere questo disco?";
 
     //**************************************************************************************************************
 
