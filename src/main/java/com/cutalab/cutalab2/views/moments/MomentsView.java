@@ -5,6 +5,7 @@ import com.cutalab.cutalab2.backend.service.MomentService;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -27,6 +28,7 @@ public class MomentsView extends VerticalLayout {
         grid.setSelectionMode(Grid.SelectionMode.NONE);
         grid.setAllRowsVisible(true);
         grid.setWidth("100%");
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.addItemClickListener(e -> {
             MomentDTO momentDTO = e.getItem();
             removeAll();

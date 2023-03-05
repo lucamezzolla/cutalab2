@@ -43,4 +43,19 @@ public class AreaLinkDTO {
         return title;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AreaLinkDTO)) return false;
+
+        AreaLinkDTO that = (AreaLinkDTO) o;
+
+        return getId().equals(that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
 }

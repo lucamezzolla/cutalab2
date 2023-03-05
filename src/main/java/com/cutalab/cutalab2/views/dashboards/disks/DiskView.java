@@ -1,6 +1,5 @@
 package com.cutalab.cutalab2.views.dashboards.disks;
 
-import ch.qos.logback.core.encoder.EchoEncoder;
 import com.cutalab.cutalab2.backend.dto.UserDTO;
 import com.cutalab.cutalab2.backend.dto.dashboards.disks.DiskDTO;
 import com.cutalab.cutalab2.backend.dto.dashboards.disks.DiskGenreDTO;
@@ -8,6 +7,8 @@ import com.cutalab.cutalab2.backend.dto.dashboards.disks.DiskStyleDTO;
 import com.cutalab.cutalab2.backend.service.DiskService;
 import com.cutalab.cutalab2.backend.service.StatusService;
 import com.cutalab.cutalab2.backend.service.UserService;
+import com.cutalab.cutalab2.utils.ConfirmDialog;
+import com.cutalab.cutalab2.utils.ConfirmDialogInterface;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
@@ -32,7 +33,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import javax.annotation.security.PermitAll;
-import javax.management.Notification;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,6 +77,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         Button searchButton = new Button(Constants.SEARCH); searchButton.setWidth("100%");
         Button clearButton = new Button(Constants.CLEAR); clearButton.setWidth("100%");
         Button addButton = new Button(new Icon(VaadinIcon.PLUS));
+        addButton.addClickListener(this::addDisk);
         searchButton.addClickListener(this::search);
         clearButton.addClickListener(this::clear);
         collectionOfCombo.setPlaceholder(Constants.COLLECTION_OF_PLACEHOLDER);
@@ -176,65 +177,75 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         .withProperty("author", DiskDTO::getAuthor);
     }
 
+    private void addDisk(ClickEvent<Button> buttonClickEvent) {
+
+    }
+
+    private void editDisk(DiskDTO diskDTO) {
+        DiskCRUDView diskCRUDView = new DiskCRUDView(diskService, statusService, Constants.FORM_UPDATE, diskDTO);
+        dialog.removeAll();
+        dialog.add(diskCRUDView);
+        dialog.setHeaderTitle(Constants.EDIT);
+        Button removeButton = new Button(new Icon(VaadinIcon.TRASH));
+        removeButton.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
+            @Override
+            public void onComponentEvent(ClickEvent<Button> buttonClickEvent) {
+                removeDisk(diskDTO);
+            };
+        });
+        Button saveButton = new Button(Constants.SAVE);
+        saveButton.addClickListener(clickEvent -> {
+            try {
+                diskService.update(diskCRUDView.getDiskDTO());
+                dialog.close();
+                search(null);
+                Constants.NOTIFICATION_DB_SUCCESS();
+            } catch (Exception e2) {
+                Constants.NOTIFICATION_DB_ERROR(e2);
+            }
+        });
+        removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        dialog.getFooter().add(removeButton);
+        dialog.getFooter().add(saveButton);
+    }
+
+    private void readDisk(DiskDTO diskDTO) {
+        DiskCRUDView diskCRUDView = new DiskCRUDView(diskService, statusService, Constants.FORM_READ, diskDTO);
+        dialog.removeAll();
+        dialog.add(diskCRUDView);
+        dialog.setHeaderTitle(Constants.DETAIL);
+    }
+
+    private void removeDisk(DiskDTO diskDTO) {
+        ConfirmDialog confirmDialog = new ConfirmDialog();
+        confirmDialog.setConfirmDialogListener(new ConfirmDialogInterface() {
+            @Override
+            public void confirmDialogListener() {
+                try {
+                    diskService.remove(diskDTO);
+                    dialog.close();
+                    search(null);
+                } catch (Exception e) {
+                    Constants.NOTIFICATION_DB_ERROR(e);
+                }
+                confirmDialog.close();
+                dialog.close();
+            }
+        });
+        confirmDialog.open();
+    }
+
     @Override
     public void onComponentEvent(ItemClickEvent<DiskDTO> diskDTOItemClickEvent) {
         dialog.removeAll();
         dialog.getFooter().removeAll();
         DiskDTO diskDTO = diskService.findByID(diskDTOItemClickEvent.getItem().getId());
         dialog.setHeaderTitle(Constants.DETAIL);
-        VerticalLayout dialogLayout = new DiskCRUDView(statusService, Constants.FORM_READ, diskDTO);
-        dialog.add(dialogLayout);
+        readDisk(diskDTO);
         Button editButton = new Button(Constants.EDIT, e -> {
-            DiskCRUDView diskCRUDView = new DiskCRUDView(statusService, Constants.FORM_UPDATE, diskDTO);
-            dialogLayout.removeAll();
-            dialog.setHeaderTitle(Constants.EDIT);
-            dialogLayout.add(diskCRUDView);
+            editDisk(diskDTOItemClickEvent.getItem());
             dialog.getFooter().remove(e.getSource());
-            Button removeButton = new Button(new Icon(VaadinIcon.TRASH));
-            removeButton.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
-                @Override
-                public void onComponentEvent(ClickEvent<Button> buttonClickEvent) {
-                    Dialog confirmDialog = new Dialog();
-                    Label label = new Label(Constants.DISK_REMOVE_CONFIRMATION);
-                    confirmDialog.add(label);
-                    confirmDialog.getFooter().add(new Button(Constants.CANCEL, e -> confirmDialog.close()));
-                    Button removeButton = new Button(Constants.REMOVE);
-                    removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-                    removeButton.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
-                        @Override
-                        public void onComponentEvent(ClickEvent<Button> buttonClickEvent) {
-                            try {
-                                diskService.remove(diskDTO);
-                                confirmDialog.close();
-                                dialog.close();
-                                search(null);
-                                Constants.NOTIFICATION_DB_SUCCESS();
-                            } catch(Exception e1) {
-                                Constants.NOTIFICATION_DB_ERROR(e1);
-                            }
-                        };
-                    });
-                    confirmDialog.getFooter().add(removeButton);
-                    confirmDialog.open();
-                };
-            });
-            Button saveButton = new Button(Constants.SAVE);
-            saveButton.addClickListener(clickEvent -> {
-                try {
-                    System.out.println("****************** " + diskCRUDView.getDiskDTO());
-                    diskService.update(diskCRUDView.getDiskDTO());
-                    dialog.close();
-                    search(null);
-                    Constants.NOTIFICATION_DB_SUCCESS();
-                } catch (Exception e2) {
-                    System.out.println("***************" + e2.getMessage());
-                    Constants.NOTIFICATION_DB_ERROR(e2);
-                }
-            });
-            removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-            saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            dialog.getFooter().add(removeButton);
-            dialog.getFooter().add(saveButton);
         });
         Button cancelButton = new Button(Constants.CANCEL, e -> dialog.close());
         dialog.getFooter().add(cancelButton);
@@ -243,4 +254,5 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         dialog.setMaxHeight("90%");
         dialog.open();
     }
+
 }

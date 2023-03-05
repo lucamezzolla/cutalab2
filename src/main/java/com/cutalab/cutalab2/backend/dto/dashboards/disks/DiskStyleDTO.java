@@ -48,4 +48,22 @@ public class DiskStyleDTO {
         return name;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DiskStyleDTO)) return false;
+
+        DiskStyleDTO styleDTO = (DiskStyleDTO) o;
+
+        if (!getId().equals(styleDTO.getId())) return false;
+        return getName().equals(styleDTO.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId().hashCode();
+        result = 31 * result + getName().hashCode();
+        return result;
+    }
+
 }

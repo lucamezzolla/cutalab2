@@ -2,9 +2,10 @@ package com.cutalab.cutalab2.views.admin.links;
 
 import com.cutalab.cutalab2.backend.dto.AreaLinkDTO;
 import com.cutalab.cutalab2.backend.dto.LinkDTO;
-import com.cutalab.cutalab2.backend.entity.LinkEntity;
 import com.cutalab.cutalab2.backend.service.AreaLinkService;
 import com.cutalab.cutalab2.backend.service.LinkService;
+import com.cutalab.cutalab2.utils.ConfirmDialog;
+import com.cutalab.cutalab2.utils.ConfirmDialogInterface;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
@@ -14,6 +15,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
@@ -21,6 +23,8 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -59,7 +63,8 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         grid.setWidth("100%");
         grid.addColumn(LinkDTO::getTitle).setHeader(Constants.LINK_GRID_HEADER_TITLE).setAutoWidth(true).setFlexGrow(0);
         grid.addColumn(LinkDTO::getUrl).setHeader(Constants.URL_GRID_HEADER_TITLE).setAutoWidth(true).setFlexGrow(0);
-        grid.addColumn("areaLinkEntity.title").setHeader(Constants.MENU_AREA_LINK).setFlexGrow(1);
+        grid.addColumn("areaLinkDTO.title").setHeader(Constants.MENU_AREA_LINK).setFlexGrow(1);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         dialog = new Dialog();
         dialog.setWidth("50%");
         dialog.setHeaderTitle(Constants.EDIT);
@@ -97,11 +102,18 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         if(title.isEmpty() || url.isEmpty() || areaLinkDTO == null) {
             Constants.NOTIFICATION_DB_VALIDATION_ERROR();
         } else {
-            LinkEntity linkEntity = new LinkEntity();
-            linkEntity.setTitle(title);
-            linkEntity.setUrl(url);
-            linkEntity.setAreaLinkEntity(areaLinkService.getEntityById(areaLinkDTO.getId()));
-            linkService.create(linkEntity);
+            LinkDTO linkDTO = new LinkDTO();
+            Binder<LinkDTO> binder = new Binder<>(LinkDTO.class);
+            binder.forField(titleTextField).bind(LinkDTO::getTitle, LinkDTO::setTitle);
+            binder.forField(urlTextField).bind(LinkDTO::getUrl, LinkDTO::setUrl);
+            binder.forField(areaLinkCombo).bind(LinkDTO::getAreaLinkDTO, LinkDTO::setAreaLinkDTO);
+            try {
+                binder.writeBean(linkDTO);
+
+            } catch (ValidationException e) {
+                throw new RuntimeException(e);
+            }
+            linkService.create(linkDTO);
             reset();
             fillGrid();
         }
@@ -125,23 +137,20 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         dialog.getFooter().removeAll();
         TextField editTextField = new TextField();
         TextField urlTextField = new TextField();
-        ComboBox<AreaLinkDTO> areaLinkCombo = new ComboBox<>();
+        ComboBox<AreaLinkDTO> areaLinkDTOField = new ComboBox<>();
         editTextField.setWidth("100%");
         urlTextField.setWidth("100%");
-        areaLinkCombo.setWidth("100%");
-        editTextField.setValue(linkDTO.getTitle());
-        urlTextField.setValue(linkDTO.getUrl());
+        areaLinkDTOField.setWidth("100%");
+        Binder<LinkDTO> binder = new Binder<>(LinkDTO.class);
+        binder.forField(editTextField).bind(LinkDTO::getTitle, LinkDTO::setTitle);
+        binder.forField(urlTextField).bind(LinkDTO::getUrl, LinkDTO::setUrl);
+        binder.forField(areaLinkDTOField).bind(LinkDTO::getAreaLinkDTO, LinkDTO::setAreaLinkDTO);
         Button saveButton = new Button(Constants.SAVE, e -> {
-            String title = editTextField.getValue();
-            String url = urlTextField.getValue();
-            AreaLinkDTO areaLinkDTO = areaLinkCombo.getValue();
-            if(title.isEmpty() || url.isEmpty() || areaLinkDTO == null) {
+            if(editTextField.getValue().isEmpty() || urlTextField.getValue().isEmpty() || areaLinkDTOField.getValue() == null) {
                 Constants.NOTIFICATION_DB_VALIDATION_ERROR();
             } else {
-                linkDTO.setTitle(title);
-                linkDTO.setUrl(url);
-                linkDTO.setAreaLinkEntity(areaLinkService.getEntityById(areaLinkDTO.getId()));
                 try {
+                    binder.writeBean(linkDTO);
                     linkService.update(linkDTO);
                     Constants.NOTIFICATION_DB_SUCCESS();
                     fillGrid();
@@ -154,29 +163,42 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button cancelButton = new Button(Constants.CANCEL, e -> dialog.close());
         Button removeButton = new Button(new Icon(VaadinIcon.TRASH), e -> {
-            try {
-                linkService.remove(linkDTO);
-                Constants.NOTIFICATION_DB_SUCCESS();
-                fillGrid();
-            } catch(Exception e2) {
-                Constants.NOTIFICATION_DB_ERROR(e2);
-            }
-            dialog.close();
+            removeLink(linkDTO);
         });
         removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        HorizontalLayout hl = new HorizontalLayout(editTextField, urlTextField, areaLinkCombo, removeButton);
+        HorizontalLayout hl = new HorizontalLayout(editTextField, urlTextField, areaLinkDTOField, removeButton);
         hl.setWidth("100%");
         hl.setMargin(false);
         hl.setPadding(false);
         hl.setFlexGrow(1, editTextField);
         hl.setFlexGrow(1, urlTextField);
-        hl.setFlexGrow(1, areaLinkCombo);
+        hl.setFlexGrow(1, areaLinkDTOField);
         dialogLayout.add(hl);
         dialog.getFooter().add(cancelButton);
         dialog.getFooter().add(saveButton);
         dialog.open();
-        areaLinkCombo.setItems(areaLinkService.findAll());
-        areaLinkCombo.setValue(areaLinkService.getDTOByEntity(linkDTO.getAreaLinkEntity()));
+        areaLinkDTOField.setItems(areaLinkService.findAll());
+        areaLinkDTOField.setValue(linkDTO.getAreaLinkDTO());
+        binder.readBean(linkDTO);
+    }
+
+    private void removeLink(LinkDTO linkDTO) {
+        ConfirmDialog confirmDialog = new ConfirmDialog();
+        confirmDialog.setConfirmDialogListener(new ConfirmDialogInterface() {
+            @Override
+            public void confirmDialogListener() {
+                try {
+                    linkService.remove(linkDTO);
+                    Constants.NOTIFICATION_DB_SUCCESS();
+                    fillGrid();
+                } catch(Exception e2) {
+                    Constants.NOTIFICATION_DB_ERROR(e2);
+                }
+                confirmDialog.close();
+                dialog.close();
+            }
+        });
+        confirmDialog.open();
     }
 
 }

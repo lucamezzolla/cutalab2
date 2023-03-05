@@ -46,4 +46,23 @@ public class DiskGenreDTO {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DiskGenreDTO)) return false;
+
+        DiskGenreDTO that = (DiskGenreDTO) o;
+
+        if (!getId().equals(that.getId())) return false;
+        return getName().equals(that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId().hashCode();
+        result = 31 * result + getName().hashCode();
+        return result;
+    }
+
 }

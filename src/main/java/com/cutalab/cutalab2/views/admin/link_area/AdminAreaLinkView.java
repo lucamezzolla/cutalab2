@@ -3,6 +3,8 @@ package com.cutalab.cutalab2.views.admin.link_area;
 import com.cutalab.cutalab2.backend.dto.AreaLinkDTO;
 import com.cutalab.cutalab2.backend.entity.AreaLinkEntity;
 import com.cutalab.cutalab2.backend.service.AreaLinkService;
+import com.cutalab.cutalab2.utils.ConfirmDialog;
+import com.cutalab.cutalab2.utils.ConfirmDialogInterface;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
@@ -11,6 +13,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
@@ -47,6 +50,7 @@ public class AdminAreaLinkView extends VerticalLayout implements ComponentEventL
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.setWidth("100%");
         grid.addColumn(AreaLinkDTO::getTitle).setHeader(Constants.AREA_LINK_GRID_HEADER_TITLE);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         dialog = new Dialog();
         dialog.setWidth("50%");
         dialog.setHeaderTitle(Constants.EDIT);
@@ -121,14 +125,22 @@ public class AdminAreaLinkView extends VerticalLayout implements ComponentEventL
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button cancelButton = new Button(Constants.CANCEL, e -> dialog.close());
         Button removeButton = new Button(new Icon(VaadinIcon.TRASH), e -> {
-            try {
-                areaLinkService.remove(areaLinkDTO);
-                Constants.NOTIFICATION_DB_SUCCESS();
-                fillGrid();
-            } catch(Exception e2) {
-                Constants.NOTIFICATION_DB_ERROR(e2);
-            }
-            dialog.close();
+            ConfirmDialog confirmDialog = new ConfirmDialog();
+            confirmDialog.setConfirmDialogListener(new ConfirmDialogInterface() {
+                @Override
+                public void confirmDialogListener() {
+                    try {
+                        areaLinkService.remove(areaLinkDTO);
+                        Constants.NOTIFICATION_DB_SUCCESS();
+                        fillGrid();
+                    } catch(Exception e2) {
+                        Constants.NOTIFICATION_DB_ERROR(e2);
+                    }
+                    confirmDialog.close();
+                    dialog.close();
+                }
+            });
+            confirmDialog.open();
         });
         removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         HorizontalLayout hl = new HorizontalLayout(editTextField, removeButton);
@@ -141,6 +153,5 @@ public class AdminAreaLinkView extends VerticalLayout implements ComponentEventL
         dialog.getFooter().add(saveButton);
         dialog.open();
     }
-
 
 }

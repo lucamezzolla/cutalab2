@@ -9,6 +9,7 @@ import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -46,6 +47,7 @@ public class LinksView extends VerticalLayout {
                     LinkDTO linkDTO = e.getItem();
                     getUI().ifPresent(ui -> ui.getPage().open(linkDTO.getUrl()));
                 });
+                grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
                 grid.setSelectionMode(Grid.SelectionMode.NONE);
                 grid.setAllRowsVisible(true);
                 grid.setWidth("100%");

@@ -1,5 +1,8 @@
 package com.cutalab.cutalab2.backend.dto.dashboards.disks;
 
+import com.cutalab.cutalab2.backend.entity.dashboards.disks.DiskGenreEntity;
+import com.cutalab.cutalab2.backend.entity.dashboards.disks.DiskStyleEntity;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,6 +157,21 @@ public class DiskDTO {
 
     public void setCover(String cover) {
         this.cover = cover;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DiskDTO)) return false;
+
+        DiskDTO diskDTO = (DiskDTO) o;
+
+        return getId().equals(diskDTO.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 
     @Override

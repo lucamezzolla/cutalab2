@@ -1,5 +1,6 @@
 package com.cutalab.cutalab2.backend.service;
 
+import com.cutalab.cutalab2.backend.dto.AreaLinkDTO;
 import com.cutalab.cutalab2.backend.dto.LinkDTO;
 import com.cutalab.cutalab2.backend.entity.AreaLinkEntity;
 import com.cutalab.cutalab2.backend.entity.LinkEntity;
@@ -21,9 +22,12 @@ public class LinkService {
     public List<LinkDTO> findAll() {
         List<LinkDTO> list1 = new ArrayList<>();
         List<LinkEntity> list2 = linkRepository.findAll(Sort.by(Sort.Direction.ASC, "title"));
-        for(LinkEntity a : list2) {
+        for(LinkEntity linkEntity : list2) {
             LinkDTO linkDTO = new LinkDTO();
-            BeanUtils.copyProperties(a, linkDTO);
+            AreaLinkDTO areaLinkDTO = new AreaLinkDTO();
+            BeanUtils.copyProperties(linkEntity, linkDTO);
+            BeanUtils.copyProperties(linkEntity.getAreaLinkEntity(), areaLinkDTO);
+            linkDTO.setAreaLinkDTO(areaLinkDTO);
             list1.add(linkDTO);
         }
         return list1;
@@ -40,13 +44,21 @@ public class LinkService {
         return list1;
     }
 
-    public LinkEntity create(LinkEntity linkEntity) {
+    public LinkEntity create(LinkDTO linkDTO) {
+        LinkEntity linkEntity = new LinkEntity();
+        AreaLinkEntity areaLinkEntity = new AreaLinkEntity();
+        BeanUtils.copyProperties(linkDTO.getAreaLinkDTO(), areaLinkEntity);
+        BeanUtils.copyProperties(linkDTO, linkEntity);
+        linkEntity.setAreaLinkEntity(areaLinkEntity);
         return linkRepository.saveAndFlush(linkEntity);
     }
 
     public LinkEntity update(LinkDTO linkDTO) {
         LinkEntity linkEntity = new LinkEntity();
+        AreaLinkEntity areaLinkEntity = new AreaLinkEntity();
+        BeanUtils.copyProperties(linkDTO.getAreaLinkDTO(), areaLinkEntity);
         BeanUtils.copyProperties(linkDTO, linkEntity);
+        linkEntity.setAreaLinkEntity(areaLinkEntity);
         return linkRepository.saveAndFlush(linkEntity);
     }
 

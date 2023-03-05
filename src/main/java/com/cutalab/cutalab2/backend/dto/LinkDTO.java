@@ -10,7 +10,7 @@ public class LinkDTO {
 
     private String url;
 
-    private AreaLinkEntity areaLinkEntity;
+    private AreaLinkDTO areaLinkDTO;
 
     public Integer getId() {
         return id;
@@ -36,12 +36,12 @@ public class LinkDTO {
         this.url = url;
     }
 
-    public AreaLinkEntity getAreaLinkEntity() {
-        return areaLinkEntity;
+    public AreaLinkDTO getAreaLinkDTO() {
+        return areaLinkDTO;
     }
 
-    public void setAreaLinkEntity(AreaLinkEntity areaLinkEntity) {
-        this.areaLinkEntity = areaLinkEntity;
+    public void setAreaLinkDTO(AreaLinkDTO areaLinkDTO) {
+        this.areaLinkDTO = areaLinkDTO;
     }
 
     @Override

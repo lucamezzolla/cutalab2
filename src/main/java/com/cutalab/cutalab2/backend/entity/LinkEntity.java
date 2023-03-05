@@ -1,8 +1,6 @@
 package com.cutalab.cutalab2.backend.entity;
 
 import com.cutalab.cutalab2.backend.dto.AreaLinkDTO;
-import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.io.Serializable;
