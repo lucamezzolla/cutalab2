@@ -14,7 +14,6 @@ import com.cutalab.cutalab2.backend.repository.DiskRepository;
 import com.cutalab.cutalab2.backend.repository.DiskStyleRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

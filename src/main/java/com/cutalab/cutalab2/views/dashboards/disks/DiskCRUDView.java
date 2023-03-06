@@ -6,7 +6,6 @@ import com.cutalab.cutalab2.backend.dto.dashboards.disks.DiskStyleDTO;
 import com.cutalab.cutalab2.backend.dto.dashboards.disks.StatusDTO;
 import com.cutalab.cutalab2.backend.service.DiskService;
 import com.cutalab.cutalab2.backend.service.StatusService;
-import com.cutalab.cutalab2.utils.ConfirmDialogInterface;
 import com.cutalab.cutalab2.utils.Constants;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Html;
@@ -26,8 +25,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
-import com.vaadin.flow.data.selection.SelectionEvent;
-import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import org.springframework.beans.BeanUtils;
 

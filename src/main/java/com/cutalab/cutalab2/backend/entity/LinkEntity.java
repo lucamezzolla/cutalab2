@@ -1,7 +1,5 @@
 package com.cutalab.cutalab2.backend.entity;
 
-import com.cutalab.cutalab2.backend.dto.AreaLinkDTO;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
