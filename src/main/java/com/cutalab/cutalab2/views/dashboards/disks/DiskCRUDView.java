@@ -20,16 +20,20 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
+import com.vaadin.flow.data.selection.SelectionEvent;
+import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Consumer;
@@ -49,7 +53,7 @@ public class DiskCRUDView extends VerticalLayout {
         this.formType = formType;
         this.diskDTO = diskDTO;
         if(formType.equals(Constants.FORM_CREATE)) {
-
+            layouts = createLayouts();
         } else if(formType.equals(Constants.FORM_UPDATE)) {
             layouts = updateLayouts();
         } else if(formType.equals(Constants.FORM_READ)) {
@@ -60,9 +64,123 @@ public class DiskCRUDView extends VerticalLayout {
         }
     }
 
+    private List<HorizontalLayout> createLayouts() {
+        List<HorizontalLayout> retval = new ArrayList<>();
+        Checkbox openable = new Checkbox(true);
+        TextField titleField = new TextField(); titleField.setWidth("100%");
+        TextField authorField = new TextField(); authorField.setWidth("100%");
+        TextField labelField = new TextField(); labelField.setWidth("100%");
+        TextField reprintField = new TextField(); reprintField.setWidth("100%");
+        TextField valueField = new TextField(); valueField.setWidth("100%");
+        TextField yearField = new TextField(); yearField.setWidth("100%");
+        ComboBox<StatusDTO> diskStatus = new ComboBox<>();
+        ComboBox<StatusDTO> coverStatus = new ComboBox<>();
+        diskStatus.setItems(statusService.findAll());
+        coverStatus.setItems(statusService.findAll());
+        diskStatus.setWidth("100%");
+        coverStatus.setWidth("100%");
+        TextArea notesArea = new TextArea(); notesArea.setWidth("100%");
+        Button genreListButton = new Button(Constants.DISK_ADD_GENRE, e-> {
+            Dialog dialog = new Dialog();
+            dialog.open();
+            dialog.setWidth("50%");
+            dialog.setMaxHeight("80%");
+            Grid<DiskGenreDTO> grid= new Grid<>(DiskGenreDTO.class, false);
+            grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+            grid.setSelectionMode(Grid.SelectionMode.MULTI);
+            grid.addColumn(DiskGenreDTO::getName).setHeader(Constants.DISK_DETAIL_GENRE);
+            grid.setItems(diskService.findAllGenres());
+            dialog.add(grid);
+            Button closeButton = new Button(Constants.CLOSE, clickEvent -> {
+                diskDTO.getDiskGenreList().clear();
+                Iterator iterator = grid.getSelectedItems().iterator();
+                while(iterator.hasNext()) {
+                    DiskGenreDTO diskGenreDTO = (DiskGenreDTO) iterator.next();
+                    diskDTO.getDiskGenreList().add(diskGenreDTO);
+                }
+                dialog.close();
+            });
+            Iterator iterator = diskDTO.getDiskGenreList().iterator();
+            while(iterator.hasNext()) {
+                DiskGenreDTO diskGenreDTO = (DiskGenreDTO) iterator.next();
+                grid.select(diskGenreDTO);
+            }
+            closeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            dialog.getFooter().add(closeButton);
+        });
+        Button styleListButton = new Button(Constants.DISK_ADD_STYLE, e-> {
+            Dialog dialog = new Dialog();
+            dialog.open();
+            dialog.setWidth("50%");
+            dialog.setMaxHeight("80%");
+            Grid<DiskStyleDTO> grid= new Grid<>(DiskStyleDTO.class, false);
+            grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+            grid.setSelectionMode(Grid.SelectionMode.MULTI);
+            Grid.Column<DiskStyleDTO> styleColumn = grid.addColumn(DiskStyleDTO::getName).setHeader(Constants.DISK_DETAIL_STYLE);
+            GridListDataView<DiskStyleDTO> dataView = grid.setItems(diskService.findAllStyles());
+            StyleFilter styleFilter = new StyleFilter(dataView);
+            grid.getHeaderRows().clear();
+            HeaderRow headerRow = grid.appendHeaderRow();
+            headerRow.getCell(styleColumn).setComponent(createFilterHeader("Comincia a scrivere lo stile...", styleFilter::setName));
+            dialog.add(grid);
+            Button closeButton = new Button(Constants.CLOSE, clickEvent -> {
+                diskDTO.getDiskStyleList().clear();
+                Iterator iterator = grid.getSelectedItems().iterator();
+                while(iterator.hasNext()) {
+                    DiskStyleDTO diskStyleDTO = (DiskStyleDTO) iterator.next();
+                    diskDTO.getDiskStyleList().add(diskStyleDTO);
+                }
+                dialog.close();
+            });
+            Iterator iterator = diskDTO.getDiskStyleList().iterator();
+            while(iterator.hasNext()) {
+                DiskStyleDTO diskStyleDTO = (DiskStyleDTO) iterator.next();
+                grid.select(diskStyleDTO);
+            }
+            closeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            dialog.getFooter().add(closeButton);
+        });
+        genreListButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        styleListButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        HorizontalLayout genreStyleLayout = new HorizontalLayout(genreListButton, styleListButton);
+        LinkedHashMap<String, Component> map = new LinkedHashMap<>();
+        map.put(Constants.DISK_DETAIL_OPENABLE, openable);
+        map.put(Constants.DISK_DETAIL_TITLE, titleField);
+        map.put(Constants.DISK_DETAIL_AUTHOR, authorField);
+        map.put(Constants.DISK_DETAIL_LABEL, labelField);
+        map.put(Constants.DISK_DETAIL_REPRINT, reprintField);
+        map.put(Constants.DISK_DETAIL_VALUE, valueField);
+        map.put(Constants.DISK_DETAIL_YEAR, yearField);
+        map.put(Constants.DISK_DETAIL_DISK_STATUS, diskStatus);
+        map.put(Constants.DISK_DETAIL_COVER_STATUS, coverStatus);
+        map.put(Constants.DISK_DETAIL_NOTE, notesArea);
+        map.put("", genreStyleLayout);
+        for (String key : map.keySet()) {
+            Html keyText = new Html("<b>"+key+"</b>");
+            keyText.getElement().getStyle().set("width", "15%");
+            Component component = map.get(key);
+            component.getElement().getStyle().set("width", "85%");
+            HorizontalLayout hl = new HorizontalLayout(keyText, component);
+            hl.setWidth("100%");
+            retval.add(hl);
+        }
+        return retval;
+    }
+
     private List<HorizontalLayout> readLayouts() {
         List<HorizontalLayout> retval = new ArrayList<>();
-        Button coverButton = new Button("Ingrandisci copertina");
+        Button coverButton = new Button("Ingrandisci copertina", e -> {
+            Dialog dialog = new Dialog();
+            dialog.open();
+            dialog.setMaxWidth("80%");
+            dialog.setMaxHeight("80%");
+            Image coverImage = new Image();
+            coverImage.setHeight("100%");
+            coverImage.setSrc(diskDTO.getCover());
+            dialog.add(coverImage);
+            Button cancelButton = new Button(Constants.CLOSE, clickEvent -> { dialog.close(); });
+            dialog.getFooter().add(cancelButton);
+        });
         coverButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         String note = "";
         if(diskDTO.getNote() == null || (diskDTO.getNote() != null && diskDTO.getNote().isEmpty()))  {
@@ -146,18 +264,37 @@ public class DiskCRUDView extends VerticalLayout {
                 diskDTO.setDiskGenreList(selectedItems);
                 dialog.close();
             });
+            saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             dialog.getFooter().add(cancelButton, saveButton);
         });
         Button styleListButton = new Button(Constants.DISK_EDIT_STYLE, e-> {
             Dialog dialog = new Dialog();
-            dialog.add(styles(diskDTO));
             dialog.open();
             dialog.setWidth("50%");
             dialog.setMaxHeight("80%");
+            Grid<DiskStyleDTO> grid= new Grid<>(DiskStyleDTO.class, false);
+            grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+            grid.setSelectionMode(Grid.SelectionMode.MULTI);
+            Grid.Column<DiskStyleDTO> styleColumn = grid.addColumn(DiskStyleDTO::getName).setHeader(Constants.DISK_DETAIL_STYLE);
+            GridListDataView<DiskStyleDTO> dataView = grid.setItems(diskService.findAllStyles());
+            StyleFilter styleFilter = new StyleFilter(dataView);
+            grid.getHeaderRows().clear();
+            HeaderRow headerRow = grid.appendHeaderRow();
+            headerRow.getCell(styleColumn).setComponent(createFilterHeader("Comincia a scrivere lo stile...", styleFilter::setName));
+            if(diskDTO != null) {
+                for(DiskStyleDTO styleDTO : diskDTO.getDiskStyleList()) {
+                    grid.getSelectionModel().select(styleDTO);
+                }
+            }
+            dialog.add(grid);
             Button cancelButton = new Button(Constants.CANCEL, clickEvent -> { dialog.close(); });
             Button saveButton = new Button(Constants.SAVE, clickEvent -> {
+                diskDTO.getDiskStyleList().clear();
+                List<DiskStyleDTO> selectedItems = new ArrayList<>(grid.getSelectedItems());
+                diskDTO.setDiskStyleList(selectedItems);
                 dialog.close();
             });
+            saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             dialog.getFooter().add(cancelButton, saveButton);
         });
         genreListButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
@@ -200,29 +337,9 @@ public class DiskCRUDView extends VerticalLayout {
         newDiskDTO.setDiskStatus(((ComboBox<StatusDTO>) layouts.get(7).getComponentAt(1)).getValue());
         newDiskDTO.setCoverStatus(((ComboBox<StatusDTO>) layouts.get(8).getComponentAt(1)).getValue());
         newDiskDTO.setNote(((TextArea) layouts.get(9).getComponentAt(1)).getValue());
+        newDiskDTO.setDiskStyleList(diskDTO.getDiskStyleList());
+        newDiskDTO.setDiskGenreList(diskDTO.getDiskGenreList());
         return newDiskDTO;
-    }
-
-
-
-    private VerticalLayout styles(DiskDTO diskDTO) {
-        VerticalLayout vl = new VerticalLayout();
-        Grid<DiskStyleDTO> grid= new Grid<>(DiskStyleDTO.class, false);
-        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
-        grid.setSelectionMode(Grid.SelectionMode.MULTI);
-        Grid.Column<DiskStyleDTO> styleColumn = grid.addColumn(DiskStyleDTO::getName).setHeader(Constants.DISK_DETAIL_STYLE);
-        GridListDataView<DiskStyleDTO> dataView = grid.setItems(diskService.findAllStyles());
-        StyleFilter styleFilter = new StyleFilter(dataView);
-        grid.getHeaderRows().clear();
-        HeaderRow headerRow = grid.appendHeaderRow();
-        headerRow.getCell(styleColumn).setComponent(createFilterHeader("Comincia a scrivere il filtro...", styleFilter::setName));
-        if(diskDTO != null) {
-            for(DiskStyleDTO styleDTO : diskDTO.getDiskStyleList()) {
-                grid.getSelectionModel().select(styleDTO);
-            }
-        }
-        vl.add(grid);
-        return vl;
     }
 
     private Component createFilterHeader(String placeholder, Consumer<String> filterChangeConsumer) {

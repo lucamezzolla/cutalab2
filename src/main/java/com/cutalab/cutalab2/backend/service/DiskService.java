@@ -148,34 +148,29 @@ public class DiskService {
 
     public void insert(DiskDTO diskDTO) {
         DiskEntity diskEntity = new DiskEntity();
-        BeanUtils.copyProperties(diskDTO, diskEntity);
+        diskEntity.setTitle(diskDTO.getTitle());
+        diskEntity.setAuthor(diskDTO.getAuthor());
+        diskEntity.setCover(diskDTO.getCover());
+        diskEntity.setLabel(diskDTO.getLabel());
+        diskEntity.setNote(diskDTO.getNote());
+        diskEntity.setOpenable(diskDTO.isOpenable());
+        diskEntity.setPresumedValue(diskDTO.getPresumedValue());
+        diskEntity.setReprint(diskDTO.getReprint());
+        diskEntity.setYear(diskDTO.getYear());
+        diskEntity.setUserId(diskDTO.getUserId());
         StatusEntity status1 = new StatusEntity();
         StatusEntity status2 = new StatusEntity();
-        List<DiskGenreEntity> listGenreEntity = new ArrayList<>();
-        List<DiskStyleEntity> listStyleEntity = new ArrayList<>();
         BeanUtils.copyProperties(diskDTO.getDiskStatus(), status1);
         BeanUtils.copyProperties(diskDTO.getCoverStatus(), status2);
-        Iterator iterator1 = diskDTO.getDiskGenreList().iterator();
-        while(iterator1.hasNext()) {
-            DiskGenreEntity genreEntity = new DiskGenreEntity();
-            BeanUtils.copyProperties(iterator1.next(), genreEntity);
-            listGenreEntity.add(genreEntity);
-        }
-        Iterator iterator2 = diskDTO.getDiskStyleList().iterator();
-        while(iterator2.hasNext()) {
-            DiskStyleEntity styleEntity = new DiskStyleEntity();
-            BeanUtils.copyProperties(iterator2.next(), styleEntity);
-            listStyleEntity.add(styleEntity);
-        }
         diskEntity.setDiskStatus(status1);
         diskEntity.setCoverStatus(status2);
-        diskEntity.setDiskGenreList(listGenreEntity);
-        diskEntity.setDiskStyleList(listStyleEntity);
-        for(DiskGenreEntity g : diskEntity.getDiskGenreList()) {
-            diskEntity.addGenre(g);
+        for(DiskGenreDTO diskGenreDTO : diskDTO.getDiskGenreList()) {
+            DiskGenreEntity diskGenreEntity = diskGenreRepository.getReferenceById(diskGenreDTO.getId());
+            diskEntity.addGenre(diskGenreEntity);
         }
-        for(DiskStyleEntity s : diskEntity.getDiskStyleList()) {
-            diskEntity.addStyle(s);
+        for(DiskStyleDTO diskStyleDTO : diskDTO.getDiskStyleList()) {
+            DiskStyleEntity diskStyleEntity = diskStyleRepository.getReferenceById(diskStyleDTO.getId());
+            diskEntity.addStyle(diskStyleEntity);
         }
         diskRepository.saveAndFlush(diskEntity);
     }
@@ -233,6 +228,7 @@ public class DiskService {
         }
         for(DiskStyleDTO diskStyleDTO : diskDTO.getDiskStyleList()) {
             DiskStyleEntity diskStyleEntity = diskStyleRepository.getReferenceById(diskStyleDTO.getId());
+            System.out.println(diskStyleEntity.getName());
             diskEntity.addStyle(diskStyleEntity);
         }
 

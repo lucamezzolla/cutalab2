@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface DiskRepository extends JpaRepository<DiskEntity, Integer> {
 
-    @Query(value = "select * from disks d where title like concat('%', :title, '%') and author like concat('%', :author, '%') and user_id = :userId", nativeQuery = true)
+    @Query(value = "select * from disks d where title like concat('%', :title, '%') and author like concat('%', :author, '%') and user_id = :userId order by author", nativeQuery = true)
     List<DiskEntity> search(String title, String author, Integer userId);
 
     @Query(value = "select distinct \n" +
@@ -32,7 +32,7 @@ public interface DiskRepository extends JpaRepository<DiskEntity, Integer> {
             "\tdisk.disk_status\n" +
             "from disks as disk\n" +
             "\tleft join disk_genre_list as dgl on dgl.disk_id = disk.id\n" +
-            "where disk.title like concat('%', :title,'%') and disk.author like concat('%', :author,'%') and dgl.genre_id = :diskGenreEntity and disk.user_id = :userId" +
+            "where disk.title like concat('%', :title,'%') and disk.author like concat('%', :author,'%') and dgl.genre_id = :diskGenreEntity and disk.user_id = :userId order by author" +
             "\n", nativeQuery = true)
     List<DiskEntity> search(String title, String author, DiskGenreEntity diskGenreEntity, Integer userId);
 
@@ -52,7 +52,7 @@ public interface DiskRepository extends JpaRepository<DiskEntity, Integer> {
             "\tdisk.disk_status\n" +
             "from disks as disk\n" +
             "\tleft join disk_style_list as dsl on dsl.disk_id = disk.id\n" +
-            "where disk.title like concat('%', :title, '%') and disk.author like concat('%', :author, '%') and dsl.style_id = :diskStyleEntity and disk.user_id = :userId" +
+            "where disk.title like concat('%', :title, '%') and disk.author like concat('%', :author, '%') and dsl.style_id = :diskStyleEntity and disk.user_id = :userId order by author" +
             "\n", nativeQuery = true)
     List<DiskEntity> search(String title, String author, DiskStyleEntity diskStyleEntity, Integer userId);
 
@@ -73,7 +73,7 @@ public interface DiskRepository extends JpaRepository<DiskEntity, Integer> {
             "from disks as disk\n" +
             "\tleft join disk_genre_list as dgl on dgl.disk_id = disk.id\n" +
             "\tleft join disk_style_list as dsl on dsl.disk_id = disk.id\n" +
-            "where disk.title like concat('%', :title,'%') and disk.author like concat('%', :author, '%') and dgl.genre_id = :diskGenreEntity and dsl.style_id = :diskStyleEntity and disk.user_id = :userId" +
+            "where disk.title like concat('%', :title,'%') and disk.author like concat('%', :author, '%') and dgl.genre_id = :diskGenreEntity and dsl.style_id = :diskStyleEntity and disk.user_id = :userId order by author" +
             "\n", nativeQuery = true)
     List<DiskEntity> search(String title, String author, DiskGenreEntity diskGenreEntity, DiskStyleEntity diskStyleEntity, Integer userId);
 

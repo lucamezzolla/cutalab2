@@ -31,6 +31,7 @@ import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.BeanUtils;
 
 import javax.annotation.security.PermitAll;
 import java.math.BigDecimal;
@@ -78,6 +79,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         Button clearButton = new Button(Constants.CLEAR); clearButton.setWidth("100%");
         Button addButton = new Button(new Icon(VaadinIcon.PLUS));
         addButton.addClickListener(this::addDisk);
+        addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         searchButton.addClickListener(this::search);
         clearButton.addClickListener(this::clear);
         collectionOfCombo.setPlaceholder(Constants.COLLECTION_OF_PLACEHOLDER);
@@ -178,7 +180,54 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
     }
 
     private void addDisk(ClickEvent<Button> buttonClickEvent) {
-
+        Dialog dialogChooseUser = new Dialog();
+        dialogChooseUser.setHeaderTitle(Constants.DISK_CREATE_TITLE);
+        dialogChooseUser.setWidth("50%");
+        ComboBox<UserDTO> comboUsers = new ComboBox<>();
+        comboUsers.setWidth("100%");
+        comboUsers.setPlaceholder(Constants.COLLECTION_OF_PLACEHOLDER);
+        comboUsers.setItems(userService.findAll());
+        Button cancel = new Button(Constants.CANCEL, e -> { dialogChooseUser.close(); });
+        Button confirm = new Button(Constants.CONTINUE, e -> {
+            if(comboUsers.getValue() != null) {
+                dialogChooseUser.close();
+                dialog.removeAll();
+                dialog.getFooter().removeAll();
+                DiskDTO diskDTO = new DiskDTO();
+                diskDTO.setUserId(comboUsers.getValue().getId());
+                DiskCRUDView diskCRUDView = new DiskCRUDView(diskService, statusService, Constants.FORM_CREATE, diskDTO);
+                dialog.add(diskCRUDView);
+                dialog.setHeaderTitle(Constants.DISK_CREATE_TITLE);
+                Button cancelButton = new Button(Constants.CANCEL, clickEvent -> { dialog.close(); });
+                Button saveButton = new Button(Constants.SAVE);
+                saveButton.addClickListener(clickEvent -> {
+                    try {
+                        diskService.insert(diskCRUDView.getDiskDTO());
+                        dialog.close();
+                        UserDTO userDTO = new UserDTO();
+                        BeanUtils.copyProperties(userService.getById(diskDTO.getUserId()), userDTO);
+                        collectionOfCombo.setValue(userDTO);
+                        search(null);
+                        Constants.NOTIFICATION_DB_SUCCESS();
+                    } catch (Exception e2) {
+                        System.out.println(e2.getMessage());
+                        System.out.println(e2.getCause().getMessage());
+                        Constants.NOTIFICATION_DB_ERROR(e2);
+                    }
+                });
+                saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                dialog.getFooter().add(cancelButton, saveButton);
+                dialog.setWidth("90%");
+                dialog.setMaxHeight("90%");
+                dialog.open();
+            } else {
+                Constants.NOTIFICATION_DB_VALIDATION_INDEX_DISKS_ERROR();
+            }
+        });
+        confirm.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        dialogChooseUser.add(comboUsers);
+        dialogChooseUser.getFooter().add(cancel, confirm);
+        dialogChooseUser.open();
     }
 
     private void editDisk(DiskDTO diskDTO) {
@@ -247,6 +296,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
             editDisk(diskDTOItemClickEvent.getItem());
             dialog.getFooter().remove(e.getSource());
         });
+        editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button cancelButton = new Button(Constants.CANCEL, e -> dialog.close());
         dialog.getFooter().add(cancelButton);
         dialog.getFooter().add(editButton);

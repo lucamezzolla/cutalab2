@@ -131,7 +131,6 @@ public class DiskEntity implements Serializable {
 
     public void addGenre(DiskGenreEntity DiskGenreEntity) {
         if(!diskGenreList.contains(DiskGenreEntity)) {
-            System.out.println("inserisco");
             diskGenreList.add(DiskGenreEntity);
             DiskGenreEntity.getDisksList().add(this);
         }

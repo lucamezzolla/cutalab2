@@ -41,6 +41,8 @@ public class Constants {
     public static final String SEARCH = "Cerca";
     public static final String CLEAR = "Pulisci";
     public static final String DETAIL = "Dettaglio";
+    public static final String CLOSE = "Chiudi";
+    public static final String CONTINUE = "Procedi";
 
 
     //GESTIONALE DISCHI
@@ -65,6 +67,9 @@ public class Constants {
     public static final String DISK_DETAIL_STYLE = "Stili";
     public static final String DISK_EDIT_GENRE = "Modifica generi";
     public static final String DISK_EDIT_STYLE = "Modifica stili";
+    public static final String DISK_ADD_GENRE = "Aggiungi generi";
+    public static final String DISK_ADD_STYLE = "Aggiungi stili";
+    public static final String DISK_CREATE_TITLE = "Aggiungi un disco";
     public static final String DISK_REMOVE_CONFIRMATION = "Sei sicuro di rimovere questo disco?";
 
     //**************************************************************************************************************
