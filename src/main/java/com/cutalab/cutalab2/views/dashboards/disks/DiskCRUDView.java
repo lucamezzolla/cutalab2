@@ -19,9 +19,11 @@ import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
@@ -67,9 +69,14 @@ public class DiskCRUDView extends VerticalLayout {
         TextField titleField = new TextField(); titleField.setWidth("100%");
         TextField authorField = new TextField(); authorField.setWidth("100%");
         TextField labelField = new TextField(); labelField.setWidth("100%");
-        TextField reprintField = new TextField(); reprintField.setWidth("100%");
-        TextField valueField = new TextField(); valueField.setWidth("100%");
-        TextField yearField = new TextField(); yearField.setWidth("100%");
+        ComboBox<String> reprintField = new ComboBox<>(); reprintField.setWidth("100%");
+        reprintField.setItems("si", "no");
+        NumberField valueField = new NumberField(); valueField.setStep(2); valueField.setWidth("100%");
+        valueField.setValue(0.00);
+        Div euroSuffix = new Div();
+        euroSuffix.setText("€");
+        valueField.setSuffixComponent(euroSuffix);
+        TextField yearField = new TextField(); yearField.setWidth("100%"); yearField.setMaxLength(4);
         ComboBox<StatusDTO> diskStatus = new ComboBox<>();
         ComboBox<StatusDTO> coverStatus = new ComboBox<>();
         diskStatus.setItems(statusService.findAll());
@@ -173,12 +180,15 @@ public class DiskCRUDView extends VerticalLayout {
             dialog.setMaxHeight("80%");
             Image coverImage = new Image();
             coverImage.setHeight("100%");
-            coverImage.setSrc(diskDTO.getCover());
+            if(diskDTO.getCover() != null) {
+                coverImage.setSrc(diskDTO.getCover());
+            }
             dialog.add(coverImage);
             Button cancelButton = new Button(Constants.CLOSE, clickEvent -> { dialog.close(); });
             dialog.getFooter().add(cancelButton);
         });
         coverButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        coverButton.setEnabled(diskDTO.getCover() != null);
         String note = "";
         if(diskDTO.getNote() == null || (diskDTO.getNote() != null && diskDTO.getNote().isEmpty()))  {
             note = "Nessuna";
@@ -230,9 +240,14 @@ public class DiskCRUDView extends VerticalLayout {
         TextField titleField = new TextField(); titleField.setWidth("100%"); titleField.setValue(diskDTO.getTitle());
         TextField authorField = new TextField(); authorField.setWidth("100%"); authorField.setValue(diskDTO.getAuthor());
         TextField labelField = new TextField(); labelField.setWidth("100%"); labelField.setValue(diskDTO.getLabel());
-        TextField reprintField = new TextField(); reprintField.setWidth("100%"); reprintField.setValue(diskDTO.getReprint());
-        TextField valueField = new TextField(); valueField.setWidth("100%"); valueField.setValue(String.valueOf(diskDTO.getPresumedValue()));
-        TextField yearField = new TextField(); yearField.setWidth("100%"); yearField.setValue(diskDTO.getYear());
+        ComboBox<String> reprintField = new ComboBox<>(); reprintField.setWidth("100%");
+        reprintField.setItems("si", "no"); reprintField.setValue(diskDTO.getReprint());
+        NumberField valueField = new NumberField(); valueField.setStep(2); valueField.setWidth("100%");
+        valueField.setValue(diskDTO.getPresumedValue().doubleValue());
+        Div euroSuffix = new Div();
+        euroSuffix.setText("€");
+        valueField.setSuffixComponent(euroSuffix);
+        TextField yearField = new TextField(); yearField.setWidth("100%"); yearField.setValue(diskDTO.getYear()); yearField.setMaxLength(4);
         ComboBox<StatusDTO> diskStatus = new ComboBox<>();
         ComboBox<StatusDTO> coverStatus = new ComboBox<>();
         diskStatus.setItems(statusService.findAll());
@@ -328,8 +343,8 @@ public class DiskCRUDView extends VerticalLayout {
         newDiskDTO.setTitle(((TextField) layouts.get(1).getComponentAt(1)).getValue());
         newDiskDTO.setAuthor(((TextField) layouts.get(2).getComponentAt(1)).getValue());
         newDiskDTO.setLabel(((TextField) layouts.get(3).getComponentAt(1)).getValue());
-        newDiskDTO.setReprint(((TextField) layouts.get(4).getComponentAt(1)).getValue());
-        newDiskDTO.setPresumedValue(BigDecimal.valueOf(Double.parseDouble(((TextField) layouts.get(5).getComponentAt(1)).getValue())));
+        newDiskDTO.setReprint(((ComboBox<String>) layouts.get(4).getComponentAt(1)).getValue());
+        newDiskDTO.setPresumedValue(BigDecimal.valueOf((((NumberField) layouts.get(5).getComponentAt(1)).getValue())));
         newDiskDTO.setYear(((TextField) layouts.get(6).getComponentAt(1)).getValue());
         newDiskDTO.setDiskStatus(((ComboBox<StatusDTO>) layouts.get(7).getComponentAt(1)).getValue());
         newDiskDTO.setCoverStatus(((ComboBox<StatusDTO>) layouts.get(8).getComponentAt(1)).getValue());

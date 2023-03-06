@@ -201,24 +201,29 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
                 Button cancelButton = new Button(Constants.CANCEL, clickEvent -> { dialog.close(); });
                 Button saveButton = new Button(Constants.SAVE);
                 saveButton.addClickListener(clickEvent -> {
-                    try {
-                        diskService.insert(diskCRUDView.getDiskDTO());
-                        dialog.close();
-                        UserDTO userDTO = new UserDTO();
-                        BeanUtils.copyProperties(userService.getById(diskDTO.getUserId()), userDTO);
-                        collectionOfCombo.setValue(userDTO);
-                        search(null);
-                        Constants.NOTIFICATION_DB_SUCCESS();
-                    } catch (Exception e2) {
-                        System.out.println(e2.getMessage());
-                        System.out.println(e2.getCause().getMessage());
-                        Constants.NOTIFICATION_DB_ERROR(e2);
+                    DiskDTO newDiskDTO = diskCRUDView.getDiskDTO();
+                    if(validateDisk(newDiskDTO)) {
+                        try {
+                            diskService.insert(newDiskDTO);
+                            dialog.close();
+                            UserDTO userDTO = new UserDTO();
+                            BeanUtils.copyProperties(userService.getById(diskDTO.getUserId()), userDTO);
+                            collectionOfCombo.setValue(userDTO);
+                            search(null);
+                            Constants.NOTIFICATION_DB_SUCCESS();
+                        } catch (Exception e2) {
+                            System.out.println(e2.getMessage());
+                            System.out.println(e2.getCause().getMessage());
+                            Constants.NOTIFICATION_DB_ERROR(e2);
+                        }
+                    } else {
+                        Constants.NOTIFICATION_DB_VALIDATION_DISK_ERROR();
                     }
                 });
                 saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
                 dialog.getFooter().add(cancelButton, saveButton);
-                dialog.setWidth("90%");
-                dialog.setMaxHeight("90%");
+                dialog.setWidth("70%");
+                dialog.setMaxHeight("80%");
                 dialog.open();
             } else {
                 Constants.NOTIFICATION_DB_VALIDATION_INDEX_DISKS_ERROR();
@@ -244,14 +249,20 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         });
         Button saveButton = new Button(Constants.SAVE);
         saveButton.addClickListener(clickEvent -> {
-            try {
-                diskService.update(diskCRUDView.getDiskDTO());
-                dialog.close();
-                search(null);
-                Constants.NOTIFICATION_DB_SUCCESS();
-            } catch (Exception e2) {
-                Constants.NOTIFICATION_DB_ERROR(e2);
+            DiskDTO newDiskDTO = diskCRUDView.getDiskDTO();
+            if(validateDisk(newDiskDTO)) {
+                try {
+                    diskService.update(newDiskDTO);
+                    dialog.close();
+                    search(null);
+                    Constants.NOTIFICATION_DB_SUCCESS();
+                } catch (Exception e2) {
+                    Constants.NOTIFICATION_DB_ERROR(e2);
+                }
+            } else {
+                Constants.NOTIFICATION_DB_VALIDATION_DISK_ERROR();
             }
+
         });
         removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -300,9 +311,20 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         Button cancelButton = new Button(Constants.CANCEL, e -> dialog.close());
         dialog.getFooter().add(cancelButton);
         dialog.getFooter().add(editButton);
-        dialog.setWidth("90%");
-        dialog.setMaxHeight("90%");
+        dialog.setWidth("70%");
+        dialog.setMaxHeight("80%");
         dialog.open();
+    }
+
+    private boolean validateDisk(DiskDTO diskDTO) {
+        if(diskDTO.getDiskStatus() == null || diskDTO.getAuthor().isEmpty() ||
+                diskDTO.getTitle().isEmpty() || diskDTO.getCoverStatus() == null ||
+                diskDTO.getDiskStyleList().size() == 0 || diskDTO.getDiskGenreList().size() == 0 ||
+                diskDTO.getLabel().isEmpty() || diskDTO.getPresumedValue() == null ||
+                diskDTO.getReprint() == null || diskDTO.getYear().isEmpty()) {
+            return false;
+        }
+        return true;
     }
 
 }

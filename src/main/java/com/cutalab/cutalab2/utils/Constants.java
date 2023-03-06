@@ -80,6 +80,7 @@ public class Constants {
     public static final String DB_OPERATION_ERROR = "Si è verificato un errore durante l'uso del database.";
     public static final String DB_OPERATION_RELATION_ERROR = "Errore. Esistono relazioni che impediscono la modifica o la rimozione.";
     public static final String DB_VALIDATION_ERROR = "Attenzione. I campi inseriti non sono validi.";
+    public static final String DB_VALIDATION_DISK_ERROR = "Attenzione. Tutt i campi, tranne il campo delle note, sono richiesti.";
     public static final String DB_VALIDATION_INDEX_DISKS_ERROR = "Indicare il nome del proprietario della collezione.";
 
     public final static void NOTIFICATION_DB_SUCCESS() {
@@ -98,6 +99,13 @@ public class Constants {
 
     public final static void NOTIFICATION_DB_VALIDATION_ERROR() {
         Notification notification = Notification.show(DB_VALIDATION_ERROR);
+        notification.setPosition(Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+        notification.setDuration(NOTIFICATION_DURATION);
+    }
+
+    public final static void NOTIFICATION_DB_VALIDATION_DISK_ERROR() {
+        Notification notification = Notification.show(DB_VALIDATION_DISK_ERROR);
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         notification.setDuration(NOTIFICATION_DURATION);
