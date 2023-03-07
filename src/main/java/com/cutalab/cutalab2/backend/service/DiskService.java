@@ -18,10 +18,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 
 @Service
 @Transactional
@@ -103,6 +107,15 @@ public class DiskService {
             diskDTO.setCoverStatus(statusDTO2);
             diskDTO.setDiskGenreList(listGenreDTO);
             diskDTO.setDiskStyleList(listStyleDTO);
+            if(diskDTO.getCover() == null || (diskDTO.getCover() != null && diskDTO.getCover().isEmpty())) {
+                String cover = getCoverImage(diskDTO);
+                if(cover != null && !cover.isEmpty()) {
+                    DiskEntity diskEntity = diskRepository.getReferenceById(diskDTO.getId());
+                    diskEntity.setCover(cover);
+                    diskRepository.saveAndFlush(diskEntity);
+                    diskDTO.setCover(cover);
+                }
+            }
             list2.add(diskDTO);
         }
         return list2;
@@ -230,12 +243,35 @@ public class DiskService {
             System.out.println(diskStyleEntity.getName());
             diskEntity.addStyle(diskStyleEntity);
         }
-
         diskRepository.saveAndFlush(diskEntity);
     }
 
     public void remove(DiskDTO diskDTO) {
         diskRepository.deleteById(diskDTO.getId());
+    }
+
+    private String getCoverImage(DiskDTO DiskDTO) {
+        String retval = "";
+        String titolo = DiskDTO.getTitle();
+        String autore = DiskDTO.getAuthor();
+        try {
+            URL url = new URL("https://api.discogs.com/database/search?q=" + titolo + " " + autore);
+            HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+            httpConn.setRequestMethod("GET");
+            httpConn.setRequestProperty("Authorization", "Discogs token=jAIYdVZGKWQkarWixrFhWhCLXLblfgtmmTYngsMz");
+            InputStream responseStream = httpConn.getResponseCode() / 100 == 2
+                    ? httpConn.getInputStream()
+                    : httpConn.getErrorStream();
+            Scanner s = new Scanner(responseStream).useDelimiter("\\A");
+            String response = s.hasNext() ? s.next() : "";
+            System.out.println(response);
+            String[] split = response.split("\"cover_image\": \"");
+            String[] split2 = split[1].split("\"");
+            retval = split2[0];
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return retval;
     }
 
 }
