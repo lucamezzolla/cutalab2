@@ -16,6 +16,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.ItemClickEvent;
@@ -34,12 +35,14 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.BeanUtils;
 
 import javax.annotation.security.PermitAll;
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @PermitAll
 @Route(value="dashboards-disks", layout = MainLayout.class)
+@CssImport(value = "/css/styles.css")
 @PageTitle(Constants.MENU_DASHBOARDS_DISKS + " | " + Constants.APP_AUTHOR)
 public class DiskView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<DiskDTO>> {
 
@@ -212,8 +215,6 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
                             search(null);
                             Constants.NOTIFICATION_DB_SUCCESS();
                         } catch (Exception e2) {
-                            System.out.println(e2.getMessage());
-                            System.out.println(e2.getCause().getMessage());
                             Constants.NOTIFICATION_DB_ERROR(e2);
                         }
                     } else {
@@ -238,8 +239,10 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
     private void editDisk(DiskDTO diskDTO) {
         DiskCRUDView diskCRUDView = new DiskCRUDView(diskService, statusService, Constants.FORM_UPDATE, diskDTO);
         dialog.removeAll();
+        dialog.getFooter().removeAll();
         dialog.add(diskCRUDView);
         dialog.setHeaderTitle(Constants.EDIT);
+        Button cancelButton = new Button(Constants.CANCEL, e -> { dialog.close(); });
         Button removeButton = new Button(new Icon(VaadinIcon.TRASH));
         removeButton.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
             @Override
@@ -264,10 +267,15 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
             }
 
         });
-        removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        removeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        dialog.getFooter().add(removeButton);
-        dialog.getFooter().add(saveButton);
+        HorizontalLayout hlFooter1 = new HorizontalLayout(removeButton);
+        HorizontalLayout hlFooter2 = new HorizontalLayout(cancelButton, saveButton);
+        HorizontalLayout hlFooter = new HorizontalLayout(hlFooter1, hlFooter2);
+        hlFooter.setWidth("100%"); hlFooter1.setWidth("100%");
+        hlFooter.setFlexGrow(1, hlFooter1);
+        hlFooter.setMargin(false);
+        dialog.getFooter().add(hlFooter);
     }
 
     private void readDisk(DiskDTO diskDTO) {

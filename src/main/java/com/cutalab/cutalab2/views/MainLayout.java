@@ -1,6 +1,5 @@
 package com.cutalab.cutalab2.views;
 
-import com.cutalab.cutalab2.backend.entity.dashboards.disks.DiskEntity;
 import com.cutalab.cutalab2.backend.security.SecurityService;
 import com.cutalab.cutalab2.backend.service.*;
 import com.cutalab.cutalab2.views.admin.AdminView;

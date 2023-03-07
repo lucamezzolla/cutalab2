@@ -142,15 +142,16 @@ public class AdminAreaLinkView extends VerticalLayout implements ComponentEventL
             });
             confirmDialog.open();
         });
-        removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        HorizontalLayout hl = new HorizontalLayout(editTextField, removeButton);
-        hl.setWidth("100%");
-        hl.setMargin(false);
-        hl.setPadding(false);
-        hl.setFlexGrow(1, editTextField);
-        dialogLayout.add(hl);
-        dialog.getFooter().add(cancelButton);
-        dialog.getFooter().add(saveButton);
+        removeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        HorizontalLayout hl = new HorizontalLayout(editTextField);
+        dialogLayout.add(editTextField);
+        HorizontalLayout hlFooter1 = new HorizontalLayout(removeButton);
+        HorizontalLayout hlFooter2 = new HorizontalLayout(cancelButton, saveButton);
+        HorizontalLayout hlFooter = new HorizontalLayout(hlFooter1, hlFooter2);
+        hlFooter.setWidth("100%"); hlFooter1.setWidth("100%");
+        hlFooter.setFlexGrow(1, hlFooter1);
+        hlFooter.setMargin(false);
+        dialog.getFooter().add(hlFooter);
         dialog.open();
     }
 

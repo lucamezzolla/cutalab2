@@ -165,8 +165,8 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         Button removeButton = new Button(new Icon(VaadinIcon.TRASH), e -> {
             removeLink(linkDTO);
         });
-        removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        HorizontalLayout hl = new HorizontalLayout(editTextField, urlTextField, areaLinkDTOField, removeButton);
+        removeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
+        HorizontalLayout hl = new HorizontalLayout(editTextField, urlTextField, areaLinkDTOField);
         hl.setWidth("100%");
         hl.setMargin(false);
         hl.setPadding(false);
@@ -174,8 +174,13 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         hl.setFlexGrow(1, urlTextField);
         hl.setFlexGrow(1, areaLinkDTOField);
         dialogLayout.add(hl);
-        dialog.getFooter().add(cancelButton);
-        dialog.getFooter().add(saveButton);
+        HorizontalLayout hlFooter1 = new HorizontalLayout(removeButton);
+        HorizontalLayout hlFooter2 = new HorizontalLayout(cancelButton, saveButton);
+        HorizontalLayout hlFooter = new HorizontalLayout(hlFooter1, hlFooter2);
+        hlFooter.setWidth("100%"); hlFooter1.setWidth("100%");
+        hlFooter.setFlexGrow(1, hlFooter1);
+        hlFooter.setMargin(false);
+        dialog.getFooter().add(hlFooter);
         dialog.open();
         areaLinkDTOField.setItems(areaLinkService.findAll());
         areaLinkDTOField.setValue(linkDTO.getAreaLinkDTO());
