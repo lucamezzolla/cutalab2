@@ -10,10 +10,12 @@ import com.cutalab.cutalab2.backend.service.UserService;
 import com.cutalab.cutalab2.utils.ConfirmDialog;
 import com.cutalab.cutalab2.utils.ConfirmDialogInterface;
 import com.cutalab.cutalab2.utils.Constants;
+import com.cutalab.cutalab2.utils.PDFFileGenerator;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -33,9 +35,13 @@ import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.StreamRegistration;
+import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.BeanUtils;
 
 import javax.annotation.security.PermitAll;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,6 +132,21 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         exportCollection.addClickListener(this::buildDialog); exportCollection.setId("exportCollection");
         backCollection.addClickListener(this::buildDialog); backCollection.setId("backCollection");
         forwardCollection.addClickListener(this::buildDialog); forwardCollection.setId("forwardCollection");
+        exportCollection.addClickListener(event -> {
+            boolean isCheckPassed = true;
+            if (!isCheckPassed) {
+                Notification.show("Unfortunately you can not download this file");
+            } else {
+                Integer userId = collectionOfCombo.getValue().getId();
+                if(userId != null && userId > 0) {
+                    PDFFileGenerator pdfFileGenerator = new PDFFileGenerator();
+                    File pdfFile = pdfFileGenerator.writeDisksToPdf(diskService.findAllDisks(userId));
+                    final StreamResource resource = new StreamResource(pdfFile.getName(), () -> getStream(pdfFile));
+                    final StreamRegistration registration = VaadinSession.getCurrent().getResourceRegistry().registerResource(resource);
+                    UI.getCurrent().getPage().open(registration.getResourceUri().getPath(), "_blank");
+                }
+            }
+        });
         pagesInfo = new Div();
         pagesInfo.getStyle().set("margin-top", "10px");
         hlButtons = new HorizontalLayout(infoCollection, exportCollection,backCollection, pagesInfo, forwardCollection);
@@ -139,6 +160,16 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         setHorizontalComponentAlignment(Alignment.CENTER, title, logo);
         fillCombos();
         setSizeFull();
+    }
+
+    private InputStream getStream(File file) {
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return stream;
     }
 
     private void buildDialog(ClickEvent<Button> buttonClickEvent) {

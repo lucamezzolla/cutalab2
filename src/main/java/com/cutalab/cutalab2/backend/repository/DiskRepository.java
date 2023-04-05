@@ -13,6 +13,9 @@ import java.util.List;
 @Repository
 public interface DiskRepository extends JpaRepository<DiskEntity, Integer> {
 
+    @Query(value = "select * from disks d where user_id = :userId order by author", nativeQuery = true)
+    List<DiskEntity> findAll(Integer userId);
+
     @Query(value = "select * from disks d where title like concat('%', :title, '%') and author like concat('%', :author, '%') and user_id = :userId order by author limit :offset, 10", nativeQuery = true)
     List<DiskEntity> search(Integer offset, String title, String author, Integer userId);
 

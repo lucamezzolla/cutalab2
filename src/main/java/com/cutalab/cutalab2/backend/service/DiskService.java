@@ -122,6 +122,48 @@ public class DiskService {
         return list2;
     }
 
+    public List<DiskDTO> findAllDisks(Integer userId) {
+        List<DiskEntity> list1 = diskRepository.findAll(userId);
+        List<DiskDTO> list2 = new ArrayList<>();
+        for (DiskEntity d : list1) {
+            DiskDTO diskDTO = new DiskDTO();
+            BeanUtils.copyProperties(d, diskDTO);
+            StatusDTO statusDTO1 = new StatusDTO();
+            StatusDTO statusDTO2 = new StatusDTO();
+            List<DiskGenreDTO> listGenreDTO = new ArrayList<>();
+            List<DiskStyleDTO> listStyleDTO = new ArrayList<>();
+            BeanUtils.copyProperties(d.getDiskStatus(), statusDTO1);
+            BeanUtils.copyProperties(d.getCoverStatus(), statusDTO2);
+            Iterator iterator1 = d.getDiskGenreList().iterator();
+            while(iterator1.hasNext()) {
+                DiskGenreDTO dto = new DiskGenreDTO();
+                BeanUtils.copyProperties(iterator1.next(), dto);
+                listGenreDTO.add(dto);
+            }
+            Iterator iterator2 = d.getDiskStyleList().iterator();
+            while(iterator2.hasNext()) {
+                DiskStyleDTO dto = new DiskStyleDTO();
+                BeanUtils.copyProperties(iterator2.next(), dto);
+                listStyleDTO.add(dto);
+            }
+            diskDTO.setDiskStatus(statusDTO1);
+            diskDTO.setCoverStatus(statusDTO2);
+            diskDTO.setDiskGenreList(listGenreDTO);
+            diskDTO.setDiskStyleList(listStyleDTO);
+            if(diskDTO.getCover() == null || (diskDTO.getCover() != null && diskDTO.getCover().isEmpty())) {
+                String cover = getCoverImage(diskDTO);
+                if(cover != null && !cover.isEmpty()) {
+                    DiskEntity diskEntity = diskRepository.getReferenceById(diskDTO.getId());
+                    diskEntity.setCover(cover);
+                    diskRepository.saveAndFlush(diskEntity);
+                    diskDTO.setCover(cover);
+                }
+            }
+            list2.add(diskDTO);
+        }
+        return list2;
+    }
+
     public DiskDTO findByID(Integer id) {
         DiskDTO diskDTO = new DiskDTO();
         DiskEntity diskEntity = diskRepository.getReferenceById(id);
