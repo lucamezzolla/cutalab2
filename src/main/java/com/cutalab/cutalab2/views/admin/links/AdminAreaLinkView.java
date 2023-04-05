@@ -1,4 +1,4 @@
-package com.cutalab.cutalab2.views.admin.link_area;
+package com.cutalab.cutalab2.views.admin.links;
 
 import com.cutalab.cutalab2.backend.dto.AreaLinkDTO;
 import com.cutalab.cutalab2.backend.entity.AreaLinkEntity;
@@ -24,10 +24,9 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
-
-@PermitAll
+@RolesAllowed("ROLE_ADMIN")
 @Route(value="admin-area-link", layout = MainLayout.class)
 @PageTitle(Constants.MENU_ADMIN + " | " + Constants.APP_AUTHOR)
 public class AdminAreaLinkView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<AreaLinkDTO>> {

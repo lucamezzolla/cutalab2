@@ -13,6 +13,7 @@ import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -20,13 +21,13 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.ItemClickEvent;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
@@ -35,7 +36,6 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.BeanUtils;
 
 import javax.annotation.security.PermitAll;
-import javax.swing.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +46,10 @@ import java.util.List;
 @PageTitle(Constants.MENU_DASHBOARDS_DISKS + " | " + Constants.APP_AUTHOR)
 public class DiskView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<DiskDTO>> {
 
+    private final HorizontalLayout hlButtons;
+    private final ProgressBar separator;
+    private final Button searchButton;
+    private final Div pagesInfo;
     private StatusService statusService;
     private DiskService diskService;
     private UserService userService;
@@ -60,6 +64,9 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
     private Label totalDiskLabel;
     private Label totalValueLabel;
     private Label partialValueLabel;
+    private Integer offset = 0;
+    private Integer page = 1;
+    private Integer pages = 0;
 
     public DiskView(StatusService statusService, UserService userService, DiskService diskService) {
         this.statusService = statusService;
@@ -68,7 +75,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         H2 title = new H2(Constants.MENU_DASHBOARDS_DISKS);
         Image logo = new Image();
         logo.setSrc("images/stereo.png");
-        logo.setWidth("13%");
+        logo.addClassNames("dashboardLogo");
         dialog = new Dialog();
         collectionOfCombo = new ComboBox<>(); collectionOfCombo.setWidth("100%");
         titleField = new TextField(); titleField.setWidth("100%");
@@ -78,7 +85,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         collectionOfCombo.setClearButtonVisible(true);
         genreCombo.setClearButtonVisible(true);
         styleCombo.setClearButtonVisible(true);
-        Button searchButton = new Button(Constants.SEARCH); searchButton.setWidth("100%");
+        searchButton = new Button(Constants.SEARCH); searchButton.setWidth("100%");
         Button clearButton = new Button(Constants.CLEAR); clearButton.setWidth("100%");
         Button addButton = new Button(new Icon(VaadinIcon.PLUS));
         addButton.addClickListener(this::addDisk);
@@ -94,6 +101,9 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         HorizontalLayout hl1 = new HorizontalLayout(collectionOfCombo, genreCombo, styleCombo);
         HorizontalLayout hl2 = new HorizontalLayout(titleField, authorField, hl0);
         hl0.setWidth("100%"); hl1.setWidth("100%"); hl2.setWidth("100%");
+        hl0.addClassName("horizontalLayoutSearchDisks");
+        hl1.addClassName("horizontalLayoutSearchDisks");
+        hl2.addClassName("horizontalLayoutSearchDisks");
         totalDiskLabel = new Label();
         totalValueLabel = new Label();
         partialValueLabel = new Label();
@@ -107,10 +117,63 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
         grid.setAllRowsVisible(true);
         grid.addColumn(createAlbumRenderer());
         grid.setVisible(false);
-        add(title, logo, hl1, hl2, totalDiskLabel, partialValueLabel, totalValueLabel, grid, dialog);
+        /************************************************************/
+        Button infoCollection = new Button(Constants.COLLECTION_INFO_BUTTON);
+        Button exportCollection = new Button(Constants.COLLECTION_EXPORT_BUTTON);
+        Button backCollection = new Button(new Icon(VaadinIcon.ARROW_BACKWARD));
+        Button forwardCollection = new Button(new Icon(VaadinIcon.ARROW_FORWARD));
+        infoCollection.addClickListener(this::buildDialog); infoCollection.setId("infoCollection");
+        exportCollection.addClickListener(this::buildDialog); exportCollection.setId("exportCollection");
+        backCollection.addClickListener(this::buildDialog); backCollection.setId("backCollection");
+        forwardCollection.addClickListener(this::buildDialog); forwardCollection.setId("forwardCollection");
+        pagesInfo = new Div();
+        pagesInfo.getStyle().set("margin-top", "10px");
+        hlButtons = new HorizontalLayout(infoCollection, exportCollection,backCollection, pagesInfo, forwardCollection);
+        hlButtons.setWidth("100%"); hlButtons.setVisible(false);
+        /***********************************************************/
+        separator = new ProgressBar();
+        separator.setMin(0); separator.setMax(100);
+        separator.setValue(100); separator.setWidth("100%");
+        separator.setVisible(false);
+        add(title, logo, hl1, hl2, separator, hlButtons, grid, dialog);
         setHorizontalComponentAlignment(Alignment.CENTER, title, logo);
         fillCombos();
         setSizeFull();
+    }
+
+    private void buildDialog(ClickEvent<Button> buttonClickEvent) {
+        switch(buttonClickEvent.getSource().getId().get()) {
+            case "infoCollection":
+                Dialog dialog1 = new Dialog();
+                dialog1.setHeaderTitle(Constants.COLLECTION_INFO_BUTTON);
+                dialog1.setWidth("50%");
+                VerticalLayout vl = new VerticalLayout(totalDiskLabel, partialValueLabel, totalValueLabel);
+                vl.setWidth("100%");
+                dialog1.add(vl);
+                dialog1.open();
+                break;
+            case "exportCollection":
+
+                break;
+            case "backCollection":
+                if(page > 1 && offset > 0) {
+                    page -= 1;
+                    offset -= 10;
+                    searchButton.click();
+                } else {
+                    Notification.show("stop");
+                }
+                break;
+            case "forwardCollection":
+                if(page <= pages) {
+                    page += 1;
+                    offset += 10;
+                    searchButton.click();
+                } else {
+                    Notification.show("stop");
+                }
+                break;
+        }
     }
 
     private void fillCombos() {
@@ -128,25 +191,32 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
             DiskGenreDTO diskGenreDTO = genreCombo.getValue();
             DiskStyleDTO diskStyleDTO = styleCombo.getValue();
             UserDTO userDTO = collectionOfCombo.getValue();
-            List<DiskDTO> disks = diskService.findDisks(title, author, diskGenreDTO, diskStyleDTO, userDTO);
+            List<DiskDTO> disks = diskService.findDisks(offset, title, author, diskGenreDTO, diskStyleDTO, userDTO);
+            double doublePages = (double)(Math.ceil((double)diskService.searchCount(title, author, diskGenreDTO, diskStyleDTO, userDTO) / 10));
+            pages = (int) doublePages;
             Integer totalDisks = diskService.count(userDTO);
             BigDecimal totalValue = diskService.totalValue(userDTO);
             BigDecimal partialValue = BigDecimal.ZERO;
             if(disks.isEmpty()) {
                 clear(null);
                 Constants.NOTIFICATION_NO_DISK();
+                separator.setVisible(false);
+                hlButtons.setVisible(false);
             } else {
+                grid.setVisible(true);
                 for(DiskDTO d : disks) {
                     partialValue = partialValue.add(d.getPresumedValue());
                 }
                 grid.setItems(disks);
-                grid.setVisible(true);
-                totalDiskLabel.setText("Dischi trovati / totale dischi: "+disks.size()+" / "+totalDisks);
-                partialValueLabel.setText("Totale valore della ricerca: "+partialValue+" €");
-                totalValueLabel.setText("Totale valore della collezione: "+totalValue+" €");
+                totalDiskLabel.setText("Dischi in lista / totale dischi: "+disks.size()+" su "+totalDisks);
+                partialValueLabel.setText("Valore dei dischi in lista: "+partialValue+" €");
+                totalValueLabel.setText("Totale valore dell'intera collezione: "+totalValue+" €");
                 totalDiskLabel.setVisible(true);
                 totalValueLabel.setVisible(true);
                 partialValueLabel.setVisible(true);
+                separator.setVisible(true);
+                pagesInfo.setText("pagina "+page+" di "+ pages);
+                hlButtons.setVisible(true);
             }
         }
     }
@@ -170,7 +240,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
     private Renderer<DiskDTO> createAlbumRenderer() {
         return LitRenderer.<DiskDTO> of(
                 "<vaadin-horizontal-layout style=\"align-items: center;\" theme=\"spacing\">"
-                        + "<vaadin-avatar img=\"${item.cover}\" style=\"width: 128px; height:128px\" title=\"${item.title}\"></vaadin-avatar>"
+                        + "<img src=\"${item.cover}\" style=\"width: 128px; height:128px; border-radius: 20px\" title=\"${item.title}\" />"
                         + "  <vaadin-vertical-layout style=\"line-height: var(--lumo-line-height-m);\">"
                         + "    <span style=\"font-size: x-large;\"> ${item.title} </span>"
                         + "    <span style=\"font-size: var(--lumo-font-size-l); color: var(--lumo-secondary-text-color);\">"
@@ -316,7 +386,7 @@ public class DiskView extends VerticalLayout implements ComponentEventListener<I
             dialog.getFooter().remove(e.getSource());
         });
         editButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button cancelButton = new Button(Constants.CANCEL, e -> dialog.close());
+        Button cancelButton = new Button(Constants.CLOSE, e -> dialog.close());
         dialog.getFooter().add(cancelButton);
         dialog.getFooter().add(editButton);
         dialog.setWidth("70%");

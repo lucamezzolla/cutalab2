@@ -12,13 +12,15 @@ public class Constants {
 
 
     public static final String MENU_ADMIN = "Amministrazione";
-    public static final String MENU_AREA_LINK = "Area";
     public static final String MENU_LOGIN = "Login";
+    public static final String MENU_AREA_LINK = "Area dei links";
+    public static final String MENU_LINKS = "Links";
+    public static final String MENU_AREA_LABORATORY = "Area dei laboratori";
     public static final String MENU_LABORATORY = "Laboratorio";
     public static final String MENU_MOMENTS = "Momenti";
     public static final String MENU_CONTACTS = "Contatti";
-    public static final String MENU_LINKS = "Links";
     public static final String MENU_DASHBOARDS = "Gestionali";
+    public static final String MENU_CHAT = "Chat";
     public static final String MENU_DASHBOARDS_DISKS = "Gestione dischi";
     public static final String MENU_DASHBOARDS_MAGICABULA = "Gestione magicabula";
 
@@ -29,6 +31,7 @@ public class Constants {
 
 
     //AMMINISTRAZIONE
+    public final static String AREA_LABORATORY_GRID_HEADER_TITLE = "Aree del laboratori";
     public final static String AREA_LINK_GRID_HEADER_TITLE = "Aree del links";
     public final static String LINK_GRID_HEADER_TITLE = "Links";
     public final static String URL_GRID_HEADER_TITLE = "URL";
@@ -43,9 +46,13 @@ public class Constants {
     public static final String DETAIL = "Dettaglio";
     public static final String CLOSE = "Chiudi";
     public static final String CONTINUE = "Procedi";
+    public static final String CREATE = "Crea";
+    public static final String PREVIEW = "Anteprima";
 
 
     //GESTIONALE DISCHI
+    public static final String COLLECTION_INFO_BUTTON = "Informazioni sulla ricerca";
+    public static final String COLLECTION_EXPORT_BUTTON = "Esporta ricerca in PDF";
     public static final String COLLECTION_OF_PLACEHOLDER = "Collezione di...";
     public static final String TITLE_SEARCH_PLACEHOLDER = "Cerca per titolo...";
     public static final String AUTHOR_SEARCH_PLACEHOLDER = "Cerca per autore...";
@@ -80,8 +87,9 @@ public class Constants {
     public static final String DB_OPERATION_ERROR = "Si è verificato un errore durante l'uso del database.";
     public static final String DB_OPERATION_RELATION_ERROR = "Errore. Esistono relazioni che impediscono la modifica o la rimozione.";
     public static final String DB_VALIDATION_ERROR = "Attenzione. I campi inseriti non sono validi.";
-    public static final String DB_VALIDATION_DISK_ERROR = "Attenzione. Tutt i campi, tranne il campo delle note, sono richiesti.";
+    public static final String DB_VALIDATION_DISK_ERROR = "Attenzione. Tutti i campi, tranne il campo delle note, sono richiesti.";
     public static final String DB_VALIDATION_INDEX_DISKS_ERROR = "Indicare il nome del proprietario della collezione.";
+    public static final String CHAT_NO_NAME = "Attenzione. Devi indicare un nome.";
 
     public final static void NOTIFICATION_DB_SUCCESS() {
         Notification notification = Notification.show(DB_OPERATION_SUCCESS);
@@ -122,6 +130,13 @@ public class Constants {
         Notification notification = Notification.show(NO_DISKS);
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_CONTRAST);
+        notification.setDuration(NOTIFICATION_DURATION);
+    }
+
+    public final static void NOTIFICATION__CHAT_NO_NAME() {
+        Notification notification = Notification.show(CHAT_NO_NAME);
+        notification.setPosition(Notification.Position.TOP_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         notification.setDuration(NOTIFICATION_DURATION);
     }
 

@@ -28,9 +28,9 @@ import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
-import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
-@PermitAll
+@RolesAllowed("ROLE_ADMIN")
 @Route(value="admin-link", layout = MainLayout.class)
 @PageTitle(Constants.MENU_ADMIN + " | " + Constants.APP_AUTHOR)
 public class AdminLinksView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<LinkDTO>> {
@@ -62,7 +62,6 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.setWidth("100%");
         grid.addColumn(LinkDTO::getTitle).setHeader(Constants.LINK_GRID_HEADER_TITLE).setAutoWidth(true).setFlexGrow(0);
-        grid.addColumn(LinkDTO::getUrl).setHeader(Constants.URL_GRID_HEADER_TITLE).setAutoWidth(true).setFlexGrow(0);
         grid.addColumn("areaLinkDTO.title").setHeader(Constants.MENU_AREA_LINK).setFlexGrow(1);
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         dialog = new Dialog();
@@ -166,14 +165,14 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
             removeLink(linkDTO);
         });
         removeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
-        HorizontalLayout hl = new HorizontalLayout(editTextField, urlTextField, areaLinkDTOField);
+        HorizontalLayout hl = new HorizontalLayout(editTextField, areaLinkDTOField);
         hl.setWidth("100%");
         hl.setMargin(false);
         hl.setPadding(false);
         hl.setFlexGrow(1, editTextField);
         hl.setFlexGrow(1, urlTextField);
         hl.setFlexGrow(1, areaLinkDTOField);
-        dialogLayout.add(hl);
+        dialogLayout.add(hl, urlTextField);
         HorizontalLayout hlFooter1 = new HorizontalLayout(removeButton);
         HorizontalLayout hlFooter2 = new HorizontalLayout(cancelButton, saveButton);
         HorizontalLayout hlFooter = new HorizontalLayout(hlFooter1, hlFooter2);

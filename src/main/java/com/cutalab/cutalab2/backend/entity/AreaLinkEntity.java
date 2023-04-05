@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
+@Table(name="link_area")
 public class AreaLinkEntity implements Serializable {
 
     @Id

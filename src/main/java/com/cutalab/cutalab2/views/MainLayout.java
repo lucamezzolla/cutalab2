@@ -1,6 +1,6 @@
 package com.cutalab.cutalab2.views;
 
-import com.cutalab.cutalab2.backend.security.SecurityService;
+import com.cutalab.cutalab2.backend.service.SecurityService;
 import com.cutalab.cutalab2.backend.service.*;
 import com.cutalab.cutalab2.views.admin.AdminView;
 import com.cutalab.cutalab2.utils.Constants;
@@ -17,16 +17,19 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.HasMenuItems;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.router.RouterLink;
 
+@Push
 @CssImport(value = "/css/styles.css")
 @CssImport(themeFor = "vaadin-menu-bar", value = "/css/styles.css")
-public class MainLayout extends AppLayout {
+public class MainLayout extends AppLayout implements AppShellConfigurator {
 
     private StatusService statusService;
     private MomentService momentService;
@@ -35,16 +38,22 @@ public class MainLayout extends AppLayout {
     private SecurityService securityService;
     private DiskService diskService;
     private UserService userService;
-    private boolean isLogged = false;
+    private LaboratoryAreaService laboratoryAreaService;
+    private LaboratoryService laboratoryService;
+    private boolean isLoggedUser = false;
+    private boolean isLoggedAdmin = false;
 
     public MainLayout(
-            StatusService statusService,
-            UserService userService,
-            MomentService momentService,
-            LinkService linkService,
-            AreaLinkService areaLinkService,
-            SecurityService securityService,
-            DiskService diskService) {
+        StatusService statusService,
+        UserService userService,
+        MomentService momentService,
+        LinkService linkService,
+        AreaLinkService areaLinkService,
+        SecurityService securityService,
+        DiskService diskService,
+        LaboratoryAreaService laboratoryAreaService,
+        LaboratoryService laboratoryService
+    ) {
         this.statusService = statusService;
         this.userService = userService;
         this.momentService = momentService;
@@ -52,24 +61,33 @@ public class MainLayout extends AppLayout {
         this.areaLinkService = areaLinkService;
         this.securityService = securityService;
         this.diskService = diskService;
-        if(this.securityService.getAuthenticatedUser() != null) isLogged = true;
+        this.laboratoryAreaService = laboratoryAreaService;
+        this.laboratoryService = laboratoryService;
+        this.isLoggedUser = this.securityService.isLogged();
+        this.isLoggedAdmin = this.securityService.isAdmin();
         createHeader();
         createDrawer();
     }
 
     private void createHeader() {
-        H1 logo = new H1(Constants.APP_TITLE);
-        logo.addClassNames("text-l", "m-m", "logo");
+        //H1 logo = new H1(Constants.APP_TITLE);
+        Image logo = new Image();
+        logo.setSrc("images/title.png");
+        logo.setHeight("80%");
+        logo.addClassNames("logo");
         Button login = new Button("Login", e -> UI.getCurrent().navigate(LoginView.class));
-        Button logout = new Button("Logout", e -> securityService.logout());
-        HorizontalLayout header = new HorizontalLayout(new DrawerToggle(), logo);
-        if(isLogged) {
+        Button logout = new Button("Logout", e -> securityService.logout()); logout.setWidth("110px");
+        HorizontalLayout hLogo = new HorizontalLayout(logo); hLogo.setMargin(false); hLogo.setPadding(false); hLogo.setHeight("95%"); hLogo.setWidth("100%");
+        hLogo.setAlignSelf(FlexComponent.Alignment.CENTER, logo);
+        HorizontalLayout header = new HorizontalLayout(new DrawerToggle(), hLogo);
+        if(isLoggedUser) {
             header.add(logout);
         } else {
             header.add(login);
         }
+        header.addClassName("horizontalLayoutHeader");
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        header.expand(logo);
+        header.setFlexGrow(1, hLogo);
         header.setMargin(false);
         header.setWidth("100%");
         header.addClassNames("py-0", "px-m, header-layout");
@@ -81,15 +99,16 @@ public class MainLayout extends AppLayout {
         menuBar.getElement().setAttribute("theme", "menu-vertical");
         menuBar.setWidth("100%");
 
-        if(isLogged) {
+        if (isLoggedAdmin) {
             MenuItem adminItem = menuBar.addItem(Constants.MENU_ADMIN, menuItemClickEvent -> {
-                this.setContent(new AdminView(linkService, areaLinkService));
+                this.setContent(new AdminView(laboratoryAreaService, laboratoryService, linkService, areaLinkService));
             });
+        }
+        if(isLoggedUser) {
             MenuItem dashboardsItem = menuBar.addItem(Constants.MENU_DASHBOARDS, menuItemClickEvent -> {
                 this.setContent(new DashboardView(statusService, userService, diskService));
             });
         }
-
         MenuItem laboratoryItem = menuBar.addItem(Constants.MENU_LABORATORY, menuItemClickEvent -> {
             this.setContent(new LaboratoryView());
         });

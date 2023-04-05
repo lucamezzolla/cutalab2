@@ -19,8 +19,8 @@ public class UserEntity implements Serializable {
     @Column(name="password", nullable = false)
     private String password;
 
-    @Column(name="is_admin", nullable = false)
-    private boolean isAdmin = false;
+    @Column(name="role", nullable = true)
+    private String role;
 
     public Integer getId() {
         return id;
@@ -46,12 +46,12 @@ public class UserEntity implements Serializable {
         this.password = password;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public String getRole() {
+        return role;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override

@@ -21,6 +21,8 @@ public class ContactsView extends VerticalLayout {
         image1.addClassNames("contacts-image");
         image1.setSrc("images/luca.jpg");
         image2.setSrc("images/email.png");
+        image1.addClassNames("contactsImages");
+        image2.addClassNames("contactsImages");
         add(title, image1, image2);
         setHorizontalComponentAlignment(Alignment.CENTER, title, image1, image2);
     }

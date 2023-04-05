@@ -8,7 +8,7 @@ public class UserDTO {
 
     private String password;
 
-    private boolean isAdmin = false;
+    private String role;
 
     public Integer getId() {
         return id;
@@ -34,12 +34,12 @@ public class UserDTO {
         this.password = password;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public String getRole() {
+        return role;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override

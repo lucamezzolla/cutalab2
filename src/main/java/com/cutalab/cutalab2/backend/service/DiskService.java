@@ -14,6 +14,7 @@ import com.cutalab.cutalab2.backend.repository.DiskRepository;
 import com.cutalab.cutalab2.backend.repository.DiskStyleRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -62,24 +63,24 @@ public class DiskService {
         return list2;
     }
 
-    public List<DiskDTO> findDisks(String title, String author, DiskGenreDTO diskGenreDTO, DiskStyleDTO diskStyleDTO, UserDTO userDTO) {
+    public List<DiskDTO> findDisks(Integer offset, String title, String author, DiskGenreDTO diskGenreDTO, DiskStyleDTO diskStyleDTO, UserDTO userDTO) {
         List<DiskEntity> list1 = new ArrayList<>();
         if (diskGenreDTO == null && diskStyleDTO == null) {
-            list1 = diskRepository.search(title, author, userDTO.getId());
+            list1 = diskRepository.search(offset, title, author, userDTO.getId());
         } else if (diskGenreDTO != null && diskStyleDTO == null) {
             DiskGenreEntity diskGenreEntity = new DiskGenreEntity();
             BeanUtils.copyProperties(diskGenreDTO, diskGenreEntity);
-            list1 = diskRepository.search(title, author, diskGenreEntity, userDTO.getId());
+            list1 = diskRepository.search(offset,title, author, diskGenreEntity, userDTO.getId());
         } else if (diskGenreDTO == null && diskStyleDTO != null) {
             DiskStyleEntity diskStyleEntity = new DiskStyleEntity();
             BeanUtils.copyProperties(diskStyleDTO, diskStyleEntity);
-            list1 = diskRepository.search(title, author, diskStyleEntity, userDTO.getId());
+            list1 = diskRepository.search(offset,title, author, diskStyleEntity, userDTO.getId());
         } else if (diskGenreDTO != null && diskStyleDTO != null) {
             DiskGenreEntity diskGenreEntity = new DiskGenreEntity();
             DiskStyleEntity diskStyleEntity = new DiskStyleEntity();
             BeanUtils.copyProperties(diskGenreDTO, diskGenreEntity);
             BeanUtils.copyProperties(diskStyleDTO, diskStyleEntity);
-            list1 = diskRepository.search(title, author, diskGenreEntity, diskStyleEntity, userDTO.getId());
+            list1 = diskRepository.search(offset,title, author, diskGenreEntity, diskStyleEntity, userDTO.getId());
         }
         List<DiskDTO> list2 = new ArrayList<>();
         for (DiskEntity d : list1) {
@@ -272,6 +273,27 @@ public class DiskService {
             System.out.println(e.getMessage());
         }
         return retval;
+    }
+
+    public Integer searchCount(String title, String author, DiskGenreDTO diskGenreDTO, DiskStyleDTO diskStyleDTO, UserDTO userDTO) {
+        if (diskGenreDTO == null && diskStyleDTO == null) {
+            return diskRepository.searchCount(title, author,userDTO.getId());
+        } else if (diskGenreDTO != null && diskStyleDTO == null) {
+            DiskGenreEntity diskGenreEntity = new DiskGenreEntity();
+            BeanUtils.copyProperties(diskGenreDTO, diskGenreEntity);
+            return diskRepository.searchCount(title, author, diskGenreEntity, userDTO.getId());
+        } else if (diskGenreDTO == null && diskStyleDTO != null) {
+            DiskStyleEntity diskStyleEntity = new DiskStyleEntity();
+            BeanUtils.copyProperties(diskStyleDTO, diskStyleEntity);
+            return diskRepository.searchCount(title, author, diskStyleEntity, userDTO.getId());
+        } else if (diskGenreDTO != null && diskStyleDTO != null) {
+            DiskGenreEntity diskGenreEntity = new DiskGenreEntity();
+            DiskStyleEntity diskStyleEntity = new DiskStyleEntity();
+            BeanUtils.copyProperties(diskGenreDTO, diskGenreEntity);
+            BeanUtils.copyProperties(diskStyleDTO, diskStyleEntity);
+            return diskRepository.searchCount(title, author, diskGenreEntity, diskStyleEntity, userDTO.getId());
+        }
+        return 0;
     }
 
 }
