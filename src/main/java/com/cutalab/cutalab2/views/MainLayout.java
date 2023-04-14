@@ -2,6 +2,8 @@ package com.cutalab.cutalab2.views;
 
 import com.cutalab.cutalab2.backend.service.SecurityService;
 import com.cutalab.cutalab2.backend.service.*;
+import com.cutalab.cutalab2.backend.service.admin.aba.ABAPackageService;
+import com.cutalab.cutalab2.backend.service.admin.aba.ABASessionService;
 import com.cutalab.cutalab2.views.admin.AdminView;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.contacts.ContactsView;
@@ -40,6 +42,8 @@ public class MainLayout extends AppLayout implements AppShellConfigurator {
     private UserService userService;
     private LaboratoryAreaService laboratoryAreaService;
     private LaboratoryService laboratoryService;
+    private ABAPackageService abaPackageService;
+    private ABASessionService abaSessionService;
     private boolean isLoggedUser = false;
     private boolean isLoggedAdmin = false;
 
@@ -52,7 +56,9 @@ public class MainLayout extends AppLayout implements AppShellConfigurator {
         SecurityService securityService,
         DiskService diskService,
         LaboratoryAreaService laboratoryAreaService,
-        LaboratoryService laboratoryService
+        LaboratoryService laboratoryService,
+        ABAPackageService abaPackageService,
+        ABASessionService abaSessionService
     ) {
         this.statusService = statusService;
         this.userService = userService;
@@ -63,6 +69,8 @@ public class MainLayout extends AppLayout implements AppShellConfigurator {
         this.diskService = diskService;
         this.laboratoryAreaService = laboratoryAreaService;
         this.laboratoryService = laboratoryService;
+        this.abaPackageService = abaPackageService;
+        this.abaSessionService = abaSessionService;
         this.isLoggedUser = this.securityService.isLogged();
         this.isLoggedAdmin = this.securityService.isAdmin();
         createHeader();
@@ -101,7 +109,7 @@ public class MainLayout extends AppLayout implements AppShellConfigurator {
 
         if (isLoggedAdmin) {
             MenuItem adminItem = menuBar.addItem(Constants.MENU_ADMIN, menuItemClickEvent -> {
-                this.setContent(new AdminView(laboratoryAreaService, laboratoryService, linkService, areaLinkService));
+                this.setContent(new AdminView(laboratoryAreaService, laboratoryService, linkService, areaLinkService, abaPackageService, abaSessionService));
             });
         }
         if(isLoggedUser) {

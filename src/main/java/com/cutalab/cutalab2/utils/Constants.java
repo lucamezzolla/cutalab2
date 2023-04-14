@@ -35,6 +35,13 @@ public class Constants {
     public final static String AREA_LINK_GRID_HEADER_TITLE = "Aree del links";
     public final static String LINK_GRID_HEADER_TITLE = "Links";
     public final static String URL_GRID_HEADER_TITLE = "URL";
+    public static final String ABA_TITLE = "Terapia ABA";
+
+    //AMMINISTRAZIONE ABA
+    public final static String ABA_GRID_COL_1 = "Giorno pagamento";
+    public final static String ABA_GRID_COL_2 = "Totale ore";
+    public final static String ABA_GRID_COL_3 = "Periodo";
+    public final static String ABA_GRID_COL_4 = "Stato";
 
     //PULSANTI
     public static final String SAVE = "Salva";

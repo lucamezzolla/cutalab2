@@ -15,7 +15,9 @@
 	<description>Sito personale</description>
 	<properties>
 		<java.version>11</java.version>
-		<vaadin.version>23.3.5</vaadin.version>
+		<vaadin.version>23.3.7</vaadin.version>
+		<!-- this parameter is needed as spring-boot bom overwrites it -->
+		<selenium.version>4.5.3</selenium.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -61,6 +63,21 @@
 			<artifactId>collaboration-engine</artifactId>
 			<version>3.2.2</version>
 		</dependency>
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-tabs-flow</artifactId>
+			<version>23.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.5.13.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.1.0</version>
+		</dependency>
     </dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -75,24 +92,43 @@
 	</dependencyManagement>
 
 	<build>
+		<defaultGoal>spring-boot:run</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<!-- Clean build and startup time for Vaadin apps sometimes may exceed
+                     the default Spring Boot's 30sec timeout.  -->
 				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
+					<jvmArguments>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
+					<wait>500</wait>
+					<maxAttempts>240</maxAttempts>
 				</configuration>
+			</plugin>
+
+			<!--
+                Take care of synchronizing java dependencies and imports in
+                package.json and main.js files.
+                It also creates webpack.config.js if not exists yet.
+            -->
+			<plugin>
+				<groupId>com.vaadin</groupId>
+				<artifactId>vaadin-maven-plugin</artifactId>
+				<version>${vaadin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-frontend</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
 
 	<profiles>
 		<profile>
+			<!-- Production mode is activated using -Pproduction -->
 			<id>production</id>
 			<build>
 				<plugins>
@@ -102,21 +138,66 @@
 						<version>${vaadin.version}</version>
 						<executions>
 							<execution>
-								<id>frontend</id>
-								<phase>compile</phase>
 								<goals>
-									<goal>prepare-frontend</goal>
 									<goal>build-frontend</goal>
 								</goals>
-								<configuration>
-									<productionMode>true</productionMode>
-								</configuration>
+								<phase>compile</phase>
 							</execution>
 						</executions>
+						<configuration>
+							<productionMode>true</productionMode>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
 
+		<profile>
+			<id>it</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>start-spring-boot</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>stop-spring-boot</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Runs the integration tests (*IT) after the server is started -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<trimStackTrace>false</trimStackTrace>
+							<enableAssertions>true</enableAssertions>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
 </project>

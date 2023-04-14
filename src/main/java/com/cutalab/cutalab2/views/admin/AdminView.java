@@ -4,8 +4,11 @@ import com.cutalab.cutalab2.backend.service.AreaLinkService;
 import com.cutalab.cutalab2.backend.service.LaboratoryAreaService;
 import com.cutalab.cutalab2.backend.service.LaboratoryService;
 import com.cutalab.cutalab2.backend.service.LinkService;
+import com.cutalab.cutalab2.backend.service.admin.aba.ABAPackageService;
+import com.cutalab.cutalab2.backend.service.admin.aba.ABASessionService;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
+import com.cutalab.cutalab2.views.admin.aba.AdminABAView;
 import com.cutalab.cutalab2.views.admin.laboratory.AdminAreaLaboratoryView;
 import com.cutalab.cutalab2.views.admin.laboratory.AdminLaboratoryView;
 import com.cutalab.cutalab2.views.admin.links.AdminAreaLinkView;
@@ -26,14 +29,19 @@ public class AdminView extends VerticalLayout {
     private LaboratoryService laboratoryService;
     private LinkService linkService;
     private AreaLinkService areaLinkService;
+    private ABAPackageService abaPackageService;
+    private ABASessionService abaSessionService;
 
-    public AdminView(LaboratoryAreaService laboratoryAreaService, LaboratoryService laboratoryService, LinkService linkService, AreaLinkService areaLinkService) {
+    public AdminView(LaboratoryAreaService laboratoryAreaService, LaboratoryService laboratoryService, LinkService linkService, AreaLinkService areaLinkService, ABAPackageService abaPackageService, ABASessionService abaSessionService) {
         this.laboratoryAreaService = laboratoryAreaService;
         this.laboratoryService = laboratoryService;
         this.linkService = linkService;
         this.areaLinkService = areaLinkService;
+        this.abaPackageService = abaPackageService;
+        this.abaSessionService = abaSessionService;
         TabSheet tabSheet = new TabSheet();
         tabSheet.setSizeFull();
+        tabSheet.add(Constants.ABA_TITLE, new AdminABAView(abaPackageService, abaSessionService));
         tabSheet.add(Constants.MENU_AREA_LABORATORY, new AdminAreaLaboratoryView(laboratoryAreaService));
         tabSheet.add(Constants.MENU_LABORATORY, new AdminLaboratoryView(laboratoryService, laboratoryAreaService));
         tabSheet.add(Constants.MENU_AREA_LINK, new AdminAreaLinkView(areaLinkService));
