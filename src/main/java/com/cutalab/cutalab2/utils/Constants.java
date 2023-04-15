@@ -36,6 +36,12 @@ public class Constants {
     public final static String LINK_GRID_HEADER_TITLE = "Links";
     public final static String URL_GRID_HEADER_TITLE = "URL";
     public static final String ABA_TITLE = "Terapia ABA";
+    public static final String ABA_INSERT_PACKAGE = "Inserisci pacchetto ABA";
+    public static final String ABA_UPDATE_PACKAGE = "Modifica pacchetto ABA";
+    public static final String ABA_REMOVE_PACKAGE = "Rimuovi pacchetto ABA";
+    public static final String ABA_CHOOSE_PAYMENT_PACKAGE = "Pagamento del pacchetto";
+    public static final String ABA_HOURS_PACKAGE = "Totale ore del pacchetto";
+    public static final String ABA_PERIOD_PACKAGE = "Periodo del pacchetto";
 
     //AMMINISTRAZIONE ABA
     public final static String ABA_GRID_COL_1 = "Giorno pagamento";
