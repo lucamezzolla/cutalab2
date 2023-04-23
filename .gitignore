@@ -1,6 +1,4 @@
-node_modules
 HELP.md
-target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -35,3 +33,20 @@ build/
 ### VS Code ###
 .vscode/
 /src/test/
+
+/frontend/
+/node_modules/
+/target/
+/.npmrc
+/.pnpmfile.cjs
+/HELP.md
+/mvnw
+/mvnw.cmd
+/package.json
+/package-lock.json
+/pom.xml
+/README.md
+/tsconfig.json
+/types.d.ts
+/vite.config.ts
+/vite.generated.ts
