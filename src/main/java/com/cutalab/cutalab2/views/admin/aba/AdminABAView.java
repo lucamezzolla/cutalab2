@@ -108,11 +108,9 @@ public class AdminABAView extends VerticalLayout implements ComponentEventListen
         paymentsCombo.setWidth("100%");
         hoursIntegerField.setWidth("100%");
         periodEnumComboBox.setWidth("100%");
-        HorizontalLayout hl1 = new HorizontalLayout(hoursIntegerField, periodEnumComboBox);
-        HorizontalLayout hl2 = new HorizontalLayout(paymentsCombo, isOpen);
-        hl1.setWidth("100%");
-        hl2.setWidth("100%");
-        addPackageDialog.add(hl1, hl2);
+        VerticalLayout vl = new VerticalLayout(hoursIntegerField, periodEnumComboBox, paymentsCombo, isOpen);
+        vl.setWidth("100%");
+        addPackageDialog.add(vl);
         //FOOTER
         Button addButton = new Button(Constants.SAVE, this::onAddPackage);
         Button cancelButton = new Button(Constants.CANCEL, e -> { addPackageDialog.close(); });
@@ -176,6 +174,8 @@ public class AdminABAView extends VerticalLayout implements ComponentEventListen
     public void onComponentEvent(ItemClickEvent<ABAPackageDTO> abaPackageDTOItemClickEvent) {
         ABAPackageDTO abaPackageDTO = abaPackageDTOItemClickEvent.getItem();
         ABASessionsView abaSessionsView = new ABASessionsView(abaPackageDTO, abaSessionService);
+        abaSessionsView.setWidth("65%");
+        abaSessionsView.setMaxHeight("65%");
         abaSessionsView.open();
     }
 

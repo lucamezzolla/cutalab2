@@ -12,6 +12,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -42,8 +43,6 @@ public class ABASessionsView extends Dialog {
     public ABASessionsView(ABAPackageDTO abaPackageDTO, ABASessionService abaSessionService) {
         this.abaPackageDTO = abaPackageDTO;
         this.abaSessionService = abaSessionService;
-        setWidth("80%");
-        setMaxHeight("80%");
         H2 title = new H2(Constants.ABA_PERIOD_PACKAGE_SESSIONS);
         Button addSessionButton = new Button(new Icon(VaadinIcon.PLUS));
         addSessionButton.addClickListener(this::onAddSessionView);
@@ -53,11 +52,16 @@ public class ABASessionsView extends Dialog {
         grid.addColumn(ABASessionDTO::getFormattedDay).setHeader(Constants.ABA_PACKAGE_SESSION_GRID_1);
         grid.addColumn(ABASessionDTO::getHours).setHeader(Constants.ABA_PACKAGE_SESSION_GRID_2);
         grid.addColumn(ABASessionDTO::getFormattedIsOpen).setHeader(Constants.ABA_PACKAGE_SESSION_GRID_3);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         HorizontalLayout hl = new HorizontalLayout(title, addSessionButton);
+        hl.setWidth("100%");
         hl.add(title, addSessionButton);
         hl.setFlexGrow(1, title);
         hl.setAlignSelf(FlexComponent.Alignment.END, addSessionButton);
-        add(hl, grid);
+        VerticalLayout vl = new VerticalLayout(hl, grid);
+        vl.setFlexGrow(1, grid);
+        vl.setSizeFull();
+        add(vl);
         setSizeFull();
         fillGrid();
     }

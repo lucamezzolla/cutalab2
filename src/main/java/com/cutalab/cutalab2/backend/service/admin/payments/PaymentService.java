@@ -27,7 +27,8 @@ public class PaymentService {
     }
 
     public List<PPaymentDTO> getAllProgressiPayments() {
-        List<PPaymentEntity> payments = paymentRepository.findAllProgressiPayments();
+        List<Integer> ids = paymentRepository.findAllProgressiPaymentsToExclude();
+        List<PPaymentEntity> payments = paymentRepository.findAllProgressiPayments(ids);
         return payments.stream().map(this::convertPaymentEntityToDTO).collect(Collectors.toList());
     }
 
