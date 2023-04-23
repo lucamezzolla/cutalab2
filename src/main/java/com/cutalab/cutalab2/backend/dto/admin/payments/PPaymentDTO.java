@@ -3,6 +3,7 @@ package com.cutalab.cutalab2.backend.dto.admin.payments;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class PPaymentDTO implements Serializable {
 
@@ -18,6 +19,7 @@ public class PPaymentDTO implements Serializable {
     private PRegistryDTO registry;
     private PServiceDTO service;
     private PCurrencyDTO currency;
+    private String descriptionAndDate;
 
     public Integer getId() {
         return id;
@@ -113,6 +115,20 @@ public class PPaymentDTO implements Serializable {
 
     public void setCurrency(PCurrencyDTO currency) {
         this.currency = currency;
+    }
+
+    public String getDescriptionAndDate() {
+        descriptionAndDate = "";
+        if(description != null && !description.equals("")) {
+            descriptionAndDate = descriptionAndDate.concat(description);
+        }
+        String paymentDateFormatted = paymentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        descriptionAndDate = descriptionAndDate.concat(" (").concat(paymentDateFormatted).concat(")");
+        return descriptionAndDate;
+    }
+
+    public void setDescriptionAndDate(String descriptionAndDate) {
+        this.descriptionAndDate = descriptionAndDate;
     }
 
     @Override

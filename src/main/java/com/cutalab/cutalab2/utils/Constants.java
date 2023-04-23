@@ -42,6 +42,14 @@ public class Constants {
     public static final String ABA_CHOOSE_PAYMENT_PACKAGE = "Pagamento del pacchetto";
     public static final String ABA_HOURS_PACKAGE = "Totale ore del pacchetto";
     public static final String ABA_PERIOD_PACKAGE = "Periodo del pacchetto";
+    public static final String ABA_IS_OPEN_PACKAGE = "Pacchetto aperto";
+    public static final String ABA_PERIOD_PACKAGE_SESSIONS = "Sessioni del pacchetto";
+    public static final String ABA_PACKAGE_SESSION_GRID_1 = "Giorno";
+    public static final String ABA_PACKAGE_SESSION_GRID_2 = "Ore";
+    public static final String ABA_PACKAGE_SESSION_GRID_3 = "Sessione conclusa";
+    public static final String ABA_HOURS_SESSION = "Totale ore della sessione";
+    public static final String ABA_DAY_SESSION = "Giorno della sessione";
+    public static final String ABA_IS_OPEN_SESSION = "Sessione aperta";
 
     //AMMINISTRAZIONE ABA
     public final static String ABA_GRID_COL_1 = "Giorno pagamento";

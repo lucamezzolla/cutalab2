@@ -2,13 +2,16 @@ package com.cutalab.cutalab2.backend.dto.admin.aba;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ABASessionDTO implements Serializable {
 
     private Integer id;
     private Integer hours;
     private LocalDateTime day;
+    private String formattedDay;
     private Boolean isOpen;
+    private String formattedIsOpen;
     private String paymentFormattedDate;
     private ABAPackageDTO ABAPackage;
 
@@ -58,6 +61,30 @@ public class ABASessionDTO implements Serializable {
 
     public void setABAPackage(ABAPackageDTO ABAPackage) {
         this.ABAPackage = ABAPackage;
+    }
+
+    public String getFormattedDay() {
+        if(day != null) {
+            formattedDay = "";
+            formattedDay = day.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        }
+        return formattedDay;
+    }
+
+    public void setFormattedDay(String formattedDay) {
+        this.formattedDay = formattedDay;
+    }
+
+    public String getFormattedIsOpen() {
+        if(isOpen != null) {
+            formattedIsOpen = "";
+            formattedIsOpen = isOpen ? "IN CORSO" : "TERMINATA";
+        }
+        return formattedIsOpen;
+    }
+
+    public void setFormattedIsOpen(String formattedIsOpen) {
+        this.formattedIsOpen = formattedIsOpen;
     }
 
     @Override

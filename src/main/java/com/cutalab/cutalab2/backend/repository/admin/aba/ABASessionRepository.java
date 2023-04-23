@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface ABASessionRepository extends JpaRepository<ABASessionEntity, Integer> {
 
-    List<ABASessionEntity> findAllByABAPackageOrderByDayAsc(ABAPackageEntity packageEntity);
+    List<ABASessionEntity> findAllByABAPackageOrderByDayDesc(ABAPackageEntity packageEntity);
 
 }

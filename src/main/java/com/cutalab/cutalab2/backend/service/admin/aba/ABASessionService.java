@@ -27,7 +27,7 @@ public class ABASessionService {
     }
 
     public List<ABASessionDTO> getAll(ABAPackageDTO packageDTO) {
-        List<ABASessionEntity> sessions = abaSessionRepository.findAllByABAPackageOrderByDayAsc(convertABAPackageDTOToEntity(packageDTO));
+        List<ABASessionEntity> sessions = abaSessionRepository.findAllByABAPackageOrderByDayDesc(convertABAPackageDTOToEntity(packageDTO));
         return sessions.stream().map(this::convertABASessionEntityToDTO).collect(Collectors.toList());
     }
 

@@ -1,24 +1,24 @@
 package com.cutalab.cutalab2.views.admin.aba;
 
 import com.cutalab.cutalab2.backend.dto.admin.aba.ABAPackageDTO;
-import com.cutalab.cutalab2.backend.dto.dashboards.disks.DiskDTO;
+import com.cutalab.cutalab2.backend.dto.admin.payments.PPaymentDTO;
 import com.cutalab.cutalab2.backend.entity.admin.aba.PeriodEnum;
 import com.cutalab.cutalab2.backend.service.admin.aba.ABAPackageService;
 import com.cutalab.cutalab2.backend.service.admin.aba.ABASessionService;
+import com.cutalab.cutalab2.backend.service.admin.payments.PaymentService;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.ItemClickEvent;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -29,10 +29,8 @@ import com.vaadin.flow.data.renderer.LitRenderer;
 import com.vaadin.flow.data.renderer.Renderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.lumo.LumoUtility;
 
 import javax.annotation.security.RolesAllowed;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 @RolesAllowed("ROLE_ADMIN")
@@ -41,18 +39,24 @@ import java.util.List;
 @PageTitle(Constants.ABA_TITLE + " | " + Constants.APP_AUTHOR)
 public class AdminABAView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<ABAPackageDTO>>  {
 
-    private ABAPackageService abaPackageService;
-    private ABASessionService abaSessionService;
-    private Grid<ABAPackageDTO> grid;
-    private Button addPackageButton;
+    private final ABAPackageService abaPackageService;
+    private final ABASessionService abaSessionService;
+    private final PaymentService paymentService;
+    private final Grid<ABAPackageDTO> grid;
+    private ComboBox<PPaymentDTO> paymentsCombo;
+    private IntegerField hoursIntegerField;
+    private ComboBox<PeriodEnum> periodEnumComboBox;
+    private Checkbox isOpen;
+    private Dialog addPackageDialog;
 
-    public AdminABAView(ABAPackageService abaPackageService, ABASessionService abaSessionService) {
+    public AdminABAView(ABAPackageService abaPackageService, ABASessionService abaSessionService, PaymentService paymentService) {
         this.abaPackageService = abaPackageService;
         this.abaSessionService = abaSessionService;
+        this.paymentService = paymentService;
         HorizontalLayout hl = new HorizontalLayout();
         hl.setWidth("100%");
         H2 title = new H2(Constants.ABA_TITLE);
-        addPackageButton = new Button(new Icon(VaadinIcon.PLUS));
+        Button addPackageButton = new Button(new Icon(VaadinIcon.PLUS));
         addPackageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
         addPackageButton.addClickListener(e -> { addPackageAction(); });
         grid = new Grid<>(ABAPackageDTO.class, false);
@@ -81,37 +85,68 @@ public class AdminABAView extends VerticalLayout implements ComponentEventListen
     }
 
     private void addPackageAction() {
-        Dialog dialog = new Dialog();
-        dialog.setHeaderTitle(Constants.ABA_INSERT_PACKAGE);
-        dialog.setWidth("50%");
-        dialog.setMaxHeight("80%");
-        Button paymentButton = new Button(Constants.ABA_CHOOSE_PAYMENT_PACKAGE);
-        IntegerField hoursIntegerField = new IntegerField();
+        addPackageDialog = new Dialog();
+        addPackageDialog.setHeaderTitle(Constants.ABA_INSERT_PACKAGE);
+        addPackageDialog.setWidth("50%");
+        addPackageDialog.setMaxHeight("80%");
+        isOpen = new Checkbox(Constants.ABA_IS_OPEN_PACKAGE);
+        isOpen.setValue(true);
+        paymentsCombo = new ComboBox<>();
+        paymentsCombo.setLabel(Constants.ABA_CHOOSE_PAYMENT_PACKAGE);
+        paymentsCombo.setItemLabelGenerator(PPaymentDTO::getDescriptionAndDate);
+        hoursIntegerField = new IntegerField();
         hoursIntegerField.setLabel(Constants.ABA_HOURS_PACKAGE);
         hoursIntegerField.setStep(1);
         hoursIntegerField.setStepButtonsVisible(true);
         hoursIntegerField.setMin(0);
         hoursIntegerField.setMax(5000);
         hoursIntegerField.setValue(0);
-        ComboBox<PeriodEnum> periodEnumComboBox = new ComboBox<>();
+        periodEnumComboBox = new ComboBox<>();
         periodEnumComboBox.setLabel(Constants.ABA_PERIOD_PACKAGE);
-        paymentButton.setWidth("100%");
+        isOpen.setWidth("100%");
+        isOpen.getStyle().set("margin-top", "30px");
+        paymentsCombo.setWidth("100%");
         hoursIntegerField.setWidth("100%");
         periodEnumComboBox.setWidth("100%");
-        HorizontalLayout hl = new HorizontalLayout(hoursIntegerField, periodEnumComboBox);
-        hl.setWidth("100%");
-        dialog.add(hl, paymentButton);
+        HorizontalLayout hl1 = new HorizontalLayout(hoursIntegerField, periodEnumComboBox);
+        HorizontalLayout hl2 = new HorizontalLayout(paymentsCombo, isOpen);
+        hl1.setWidth("100%");
+        hl2.setWidth("100%");
+        addPackageDialog.add(hl1, hl2);
         //FOOTER
-        Button addButton = new Button(Constants.SAVE);
-        Button cancelButton = new Button(Constants.CANCEL, e -> { dialog.close(); });
+        Button addButton = new Button(Constants.SAVE, this::onAddPackage);
+        Button cancelButton = new Button(Constants.CANCEL, e -> { addPackageDialog.close(); });
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        dialog.getFooter().add(cancelButton, addButton);
+        addPackageDialog.getFooter().add(cancelButton, addButton);
         //FILL
         fillPeriodEnumComboBox(periodEnumComboBox);
+        fillPaymentCombo(paymentsCombo);
         //show
-        dialog.open();
+        addPackageDialog.open();
     }
 
+    private void onAddPackage(ClickEvent<Button> buttonClickEvent) {
+        Integer hours = hoursIntegerField.getValue();
+        PeriodEnum period = periodEnumComboBox.getValue();
+        PPaymentDTO payment = paymentsCombo.getValue();
+        Boolean isOpenPackage = isOpen.getValue();
+        if(hours == null || period == null || payment == null) {
+            Constants.NOTIFICATION_DB_VALIDATION_ERROR();
+        } else {
+            ABAPackageDTO abaPackageDTO = new ABAPackageDTO();
+            abaPackageDTO.setHours(hours);
+            abaPackageDTO.setPayment(payment);
+            abaPackageDTO.setPeriod(period);
+            abaPackageDTO.setOpen(isOpenPackage);
+            try {
+                abaPackageService.insert(abaPackageDTO);
+                addPackageDialog.close();
+                fillGrid();
+            } catch (Exception e) {
+                Constants.NOTIFICATION_DB_ERROR(e);
+            }
+        }
+    }
 
     private void fillGrid() {
         List<ABAPackageDTO> packages = abaPackageService.getAll();
@@ -120,6 +155,11 @@ public class AdminABAView extends VerticalLayout implements ComponentEventListen
 
     private void fillPeriodEnumComboBox(ComboBox<PeriodEnum> periodEnumComboBox) {
         periodEnumComboBox.setItems(PeriodEnum.ZERO.getList());
+    }
+
+    private void fillPaymentCombo(ComboBox<PPaymentDTO> paymentDTOComboBox) {
+        List<PPaymentDTO> payments = paymentService.getAllProgressiPayments();
+        paymentDTOComboBox.setItems(payments);
     }
 
     private Renderer<ABAPackageDTO> createCol1() {
@@ -134,7 +174,9 @@ public class AdminABAView extends VerticalLayout implements ComponentEventListen
 
     @Override
     public void onComponentEvent(ItemClickEvent<ABAPackageDTO> abaPackageDTOItemClickEvent) {
-
+        ABAPackageDTO abaPackageDTO = abaPackageDTOItemClickEvent.getItem();
+        ABASessionsView abaSessionsView = new ABASessionsView(abaPackageDTO, abaSessionService);
+        abaSessionsView.open();
     }
 
 }
