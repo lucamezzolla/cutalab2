@@ -50,6 +50,12 @@ public class Constants {
     public static final String ABA_HOURS_SESSION = "Totale ore della sessione";
     public static final String ABA_DAY_SESSION = "Giorno della sessione";
     public static final String ABA_IS_OPEN_SESSION = "Sessione aperta";
+    public static final String ABA_DETAIL_SESSION_1 = "Ore lavorate";
+    public static final String ABA_DETAIL_SESSION_2 = "su";
+    public static final String ABA_OPEN_PACKAGE = "Apri pacchetto";
+    public static final String ABA_CLOSE_PACKAGE = "Chiudi pacchetto";
+    public static final String ABA_OPEN_SESSION = "Apri sessione";
+    public static final String ABA_CLOSE_SESSION = "Chiudi sessione";
 
     //AMMINISTRAZIONE ABA
     public final static String ABA_GRID_COL_1 = "Giorno pagamento";
@@ -110,7 +116,7 @@ public class Constants {
     public static final String DB_VALIDATION_ERROR = "Attenzione. I campi inseriti non sono validi.";
     public static final String DB_VALIDATION_DISK_ERROR = "Attenzione. Tutti i campi, tranne il campo delle note, sono richiesti.";
     public static final String DB_VALIDATION_INDEX_DISKS_ERROR = "Indicare il nome del proprietario della collezione.";
-    public static final String CHAT_NO_NAME = "Attenzione. Devi indicare un nome.";
+    public static final String ABA_CLOSE_PACKAGE_ERROR = "Attenzione. Non puoi chiudere un pacchetto quando una o più sessioni sono aperte.";
 
     public final static void NOTIFICATION_DB_SUCCESS() {
         Notification notification = Notification.show(DB_OPERATION_SUCCESS);
@@ -153,13 +159,14 @@ public class Constants {
         notification.addThemeVariants(NotificationVariant.LUMO_CONTRAST);
         notification.setDuration(NOTIFICATION_DURATION);
     }
-
-    public final static void NOTIFICATION__CHAT_NO_NAME() {
-        Notification notification = Notification.show(CHAT_NO_NAME);
+    public final static void NOTIFICATION_ABA_CLOSE_PACKAGE_ERROR() {
+        Notification notification = Notification.show(ABA_CLOSE_PACKAGE_ERROR);
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         notification.setDuration(NOTIFICATION_DURATION);
     }
+
+
 
 
     //**************************************************************************************************************

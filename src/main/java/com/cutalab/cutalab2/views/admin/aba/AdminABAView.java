@@ -37,7 +37,7 @@ import java.util.List;
 @Route(value="admin-aba", layout = MainLayout.class)
 //@CssImport(value = "/css/styles.css")
 @PageTitle(Constants.ABA_TITLE + " | " + Constants.APP_AUTHOR)
-public class AdminABAView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<ABAPackageDTO>>  {
+public class AdminABAView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<ABAPackageDTO>>, ClosePackageInterface  {
 
     private final ABAPackageService abaPackageService;
     private final ABASessionService abaSessionService;
@@ -173,10 +173,20 @@ public class AdminABAView extends VerticalLayout implements ComponentEventListen
     @Override
     public void onComponentEvent(ItemClickEvent<ABAPackageDTO> abaPackageDTOItemClickEvent) {
         ABAPackageDTO abaPackageDTO = abaPackageDTOItemClickEvent.getItem();
-        ABASessionsView abaSessionsView = new ABASessionsView(abaPackageDTO, abaSessionService);
+        ABASessionsView abaSessionsView = new ABASessionsView(abaPackageDTO, abaPackageService, abaSessionService);
+        abaSessionsView.setHeaderTitle(Constants.ABA_PERIOD_PACKAGE_SESSIONS);
         abaSessionsView.setWidth("65%");
         abaSessionsView.setMaxHeight("65%");
+        abaSessionsView.setListener(this);
+        Button closeButton = new Button(new Icon("lumo", "cross"),
+                (e) -> abaSessionsView.close());
+        closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        abaSessionsView.getHeader().add(closeButton);
         abaSessionsView.open();
     }
 
+    @Override
+    public void closePackageListener() {
+        fillGrid();
+    }
 }

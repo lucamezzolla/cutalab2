@@ -47,6 +47,21 @@ public class ABASessionService {
         abaSessionRepository.delete(convertABASessionDTOToEntity(abaSessionDTO));
     }
 
+    public Integer getWorkedHours(ABAPackageDTO packageDTO) {
+        return abaSessionRepository.getWorkedHoursTotal(convertABAPackageDTOToEntity(packageDTO));
+    }
+
+    public Boolean allSessionsClosed(ABAPackageDTO packageDTO) {
+        //questo metodo restituisce true se tutte le sessioni sono chiuse
+        List<Boolean> integers = abaSessionRepository.allSessionsClosed(convertABAPackageDTOToEntity(packageDTO));
+        return !integers.contains(Boolean.TRUE);
+    }
+
+    public void closeOpenSession(ABASessionDTO abaSessionDTO) {
+        abaSessionDTO.setOpen(!abaSessionDTO.getOpen());
+        abaSessionRepository.saveAndFlush(convertABASessionDTOToEntity(abaSessionDTO));
+    }
+
     private ABASessionDTO convertABASessionEntityToDTO(ABASessionEntity entity) {
         return modelMapper.map(entity, ABASessionDTO.class);
     }
