@@ -45,9 +45,7 @@ public class AdminView extends VerticalLayout {
         TabSheet tabSheet = new TabSheet();
         tabSheet.setSizeFull();
         tabSheet.add(Constants.ABA_TITLE, new AdminABAView(abaPackageService, abaSessionService, paymentService));
-        tabSheet.add(Constants.MENU_AREA_LABORATORY, new AdminAreaLaboratoryView(laboratoryAreaService));
         tabSheet.add(Constants.MENU_LABORATORY, new AdminLaboratoryView(laboratoryService, laboratoryAreaService));
-        tabSheet.add(Constants.MENU_AREA_LINK, new AdminAreaLinkView(areaLinkService));
         tabSheet.add(Constants.MENU_LINKS, new AdminLinksView(areaLinkService, linkService));
         add(tabSheet);
         setSizeFull();

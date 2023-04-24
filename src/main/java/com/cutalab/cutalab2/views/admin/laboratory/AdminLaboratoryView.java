@@ -6,6 +6,7 @@ import com.cutalab.cutalab2.backend.service.LaboratoryAreaService;
 import com.cutalab.cutalab2.backend.service.LaboratoryService;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
+import com.cutalab.cutalab2.views.admin.links.AdminAreaLinkView;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -35,14 +36,14 @@ import java.time.LocalDateTime;
 public class AdminLaboratoryView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<LaboratoryDTO>> {
 
     private TextArea editor;
-    private TextField titleTextField;
-    private Button addTitleButton;
-    private ComboBox<LaboratoryAreaDTO> laboratoryAreaDTOComboBox;
-    private Grid<LaboratoryDTO> grid;
-    private Dialog dialog;
+    private final TextField titleTextField;
+    private final Button addTitleButton;
+    private final ComboBox<LaboratoryAreaDTO> laboratoryAreaDTOComboBox;
+    private final Grid<LaboratoryDTO> grid;
+    private final Dialog dialog;
 
-    private LaboratoryService laboratoryService;
-    private LaboratoryAreaService laboratoryAreaService;
+    private final LaboratoryService laboratoryService;
+    private final LaboratoryAreaService laboratoryAreaService;
 
     public AdminLaboratoryView(LaboratoryService laboratoryService, LaboratoryAreaService laboratoryAreaService) {
         this.laboratoryService = laboratoryService;
@@ -50,6 +51,8 @@ public class AdminLaboratoryView extends VerticalLayout implements ComponentEven
         H2 title = new H2(Constants.MENU_LABORATORY);
         titleTextField = new TextField();
         addTitleButton = new Button(new Icon(VaadinIcon.PLUS), this::onAddTitleButton);
+        Button areaLaboratoryButton = new Button(Constants.MENU_AREA_LABORATORY, this::onAreaLaboratory);
+        areaLaboratoryButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         titleTextField.setPlaceholder("Titolo del laboratorio...");
         laboratoryAreaDTOComboBox = new ComboBox<>();
         grid = new Grid<>(LaboratoryDTO.class, false);
@@ -62,7 +65,7 @@ public class AdminLaboratoryView extends VerticalLayout implements ComponentEven
         dialog.setWidth("90%");
         dialog.setHeight("90%");
         laboratoryAreaDTOComboBox.setItems(laboratoryAreaService.findAll());
-        HorizontalLayout headerLayout = new HorizontalLayout(titleTextField, laboratoryAreaDTOComboBox, addTitleButton);
+        HorizontalLayout headerLayout = new HorizontalLayout(titleTextField, laboratoryAreaDTOComboBox, addTitleButton, areaLaboratoryButton);
         headerLayout.setFlexGrow(1, titleTextField);
         headerLayout.setFlexGrow(1, laboratoryAreaDTOComboBox);
         headerLayout.setWidth("100%");
@@ -116,6 +119,15 @@ public class AdminLaboratoryView extends VerticalLayout implements ComponentEven
         }
     }
 
+    private void onAreaLaboratory(ClickEvent<Button> buttonClickEvent) {
+        Dialog dialog = new Dialog();
+        dialog.setWidth("90%");
+        dialog.setMaxHeight("90%");
+        dialog.setHeaderTitle(Constants.MENU_AREA_LABORATORY);
+        dialog.add(new AdminAreaLaboratoryView(laboratoryAreaService));
+        dialog.open();
+    }
+
     private void fillGrid() {
         grid.setItems(laboratoryService.findAll());
     }
@@ -134,7 +146,7 @@ public class AdminLaboratoryView extends VerticalLayout implements ComponentEven
 
 class StyledText extends Composite<Span> implements HasText {
 
-    private Span content = new Span();
+    private final Span content = new Span();
     private String text;
 
     public StyledText(String htmlText) {

@@ -41,6 +41,7 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
     private TextField urlTextField;
     private ComboBox<AreaLinkDTO> areaLinkCombo;
     private Button addLinkButton;
+    private Button areaLinkButton;
     private Grid<LinkDTO> grid;
     private Dialog dialog;
     private VerticalLayout dialogLayout;
@@ -55,14 +56,16 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         areaLinkCombo.addFocusListener(e -> { fillAreaLinkCombo(); });
         areaLinkCombo.setPlaceholder("Area...");
         addLinkButton = new Button(new Icon(VaadinIcon.PLUS), this::onAddLinkButton);
+        areaLinkButton = new Button(Constants.MENU_AREA_LINK, this::onAreaLink);
+        areaLinkButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         titleTextField.setPlaceholder("Titolo...");
         urlTextField.setPlaceholder("URL...");
         grid = new Grid<>(LinkDTO.class, false);
         grid.addItemClickListener(this);
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.setWidth("100%");
-        grid.addColumn(LinkDTO::getTitle).setHeader(Constants.LINK_GRID_HEADER_TITLE).setAutoWidth(true).setFlexGrow(0);
-        grid.addColumn("areaLinkDTO.title").setHeader(Constants.MENU_AREA_LINK).setFlexGrow(1);
+        grid.addColumn("areaLinkDTO.title").setHeader(Constants.MENU_AREA_LINK).setAutoWidth(true).setFlexGrow(0);
+        grid.addColumn(LinkDTO::getTitle).setHeader(Constants.LINK_GRID_HEADER_TITLE).setAutoWidth(true).setFlexGrow(1);
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         dialog = new Dialog();
         dialog.setWidth("50%");
@@ -71,7 +74,7 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         dialogLayout.setMargin(false);
         dialogLayout.setPadding(false);
         dialog.add(dialogLayout);
-        HorizontalLayout headerLayout = new HorizontalLayout(titleTextField, urlTextField, areaLinkCombo, addLinkButton);
+        HorizontalLayout headerLayout = new HorizontalLayout(titleTextField, urlTextField, areaLinkCombo, addLinkButton, areaLinkButton);
         headerLayout.setWidth("100%");
         add(title, headerLayout, grid, dialog);
         setFlexGrow(1, grid);
@@ -123,6 +126,15 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         if(eventButton.equals(addLinkButton)) {
             addLink();
         }
+    }
+
+    private void onAreaLink(ClickEvent<Button> buttonClickEvent) {
+        Dialog dialog = new Dialog();
+        dialog.setWidth("90%");
+        dialog.setMaxHeight("90%");
+        dialog.setHeaderTitle(Constants.MENU_AREA_LINK);
+        dialog.add(new AdminAreaLinkView(areaLinkService));
+        dialog.open();
     }
 
     @Override

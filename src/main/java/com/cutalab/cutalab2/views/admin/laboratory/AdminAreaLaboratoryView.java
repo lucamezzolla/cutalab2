@@ -31,16 +31,15 @@ import javax.annotation.security.RolesAllowed;
 @PageTitle(Constants.MENU_ADMIN + " | " + Constants.APP_AUTHOR)
 public class AdminAreaLaboratoryView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<LaboratoryAreaDTO>> {
 
-    private LaboratoryAreaService laboratoryAreaService;
-    private TextField titleTextField;
-    private Button addTitleButton;
-    private Grid<LaboratoryAreaDTO> grid;
-    private Dialog dialog;
-    private VerticalLayout dialogLayout;
+    private final LaboratoryAreaService laboratoryAreaService;
+    private final TextField titleTextField;
+    private final Button addTitleButton;
+    private final Grid<LaboratoryAreaDTO> grid;
+    private final Dialog dialog;
+    private final VerticalLayout dialogLayout;
 
     public AdminAreaLaboratoryView(LaboratoryAreaService laboratoryAreaService) {
         this.laboratoryAreaService = laboratoryAreaService;
-        H2 title = new H2(Constants.MENU_AREA_LABORATORY);
         titleTextField = new TextField();
         addTitleButton = new Button(new Icon(VaadinIcon.PLUS), this::onAddTitleButton);
         titleTextField.setPlaceholder("Area dei laboratori...");
@@ -60,7 +59,7 @@ public class AdminAreaLaboratoryView extends VerticalLayout implements Component
         HorizontalLayout headerLayout = new HorizontalLayout(titleTextField, addTitleButton);
         headerLayout.setFlexGrow(1, titleTextField);
         headerLayout.setWidth("100%");
-        add(title, headerLayout, grid, dialog);
+        add(headerLayout, grid, dialog);
         setFlexGrow(1, grid);
         setSizeFull();
         fillGrid();

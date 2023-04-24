@@ -40,7 +40,6 @@ public class AdminAreaLinkView extends VerticalLayout implements ComponentEventL
 
     public AdminAreaLinkView(AreaLinkService areaLinkService) {
         this.areaLinkService = areaLinkService;
-        H2 title = new H2(Constants.MENU_AREA_LINK);
         titleTextField = new TextField();
         addTitleButton = new Button(new Icon(VaadinIcon.PLUS), this::onAddTitleButton);
         titleTextField.setPlaceholder("Area dei links...");
@@ -60,7 +59,7 @@ public class AdminAreaLinkView extends VerticalLayout implements ComponentEventL
         HorizontalLayout headerLayout = new HorizontalLayout(titleTextField, addTitleButton);
         headerLayout.setFlexGrow(1, titleTextField);
         headerLayout.setWidth("100%");
-        add(title, headerLayout, grid, dialog);
+        add(headerLayout, grid, dialog);
         setFlexGrow(1, grid);
         setSizeFull();
         fillGrid();
