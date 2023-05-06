@@ -10,9 +10,7 @@ import com.cutalab.cutalab2.backend.service.admin.payments.PaymentService;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.cutalab.cutalab2.views.admin.aba.AdminABAView;
-import com.cutalab.cutalab2.views.admin.laboratory.AdminAreaLaboratoryView;
 import com.cutalab.cutalab2.views.admin.laboratory.AdminLaboratoryView;
-import com.cutalab.cutalab2.views.admin.links.AdminAreaLinkView;
 import com.cutalab.cutalab2.views.admin.links.AdminLinksView;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
@@ -26,22 +24,8 @@ import javax.annotation.security.RolesAllowed;
 @PageTitle(Constants.MENU_ADMIN + " | " + Constants.APP_AUTHOR)
 public class AdminView extends VerticalLayout {
 
-    private final LaboratoryAreaService laboratoryAreaService;
-    private final LaboratoryService laboratoryService;
-    private final LinkService linkService;
-    private final AreaLinkService areaLinkService;
-    private final ABAPackageService abaPackageService;
-    private final ABASessionService abaSessionService;
-    private final PaymentService paymentService;
-
     public AdminView(LaboratoryAreaService laboratoryAreaService, LaboratoryService laboratoryService, LinkService linkService, AreaLinkService areaLinkService, ABAPackageService abaPackageService, ABASessionService abaSessionService, PaymentService paymentService) {
-        this.laboratoryAreaService = laboratoryAreaService;
-        this.laboratoryService = laboratoryService;
-        this.linkService = linkService;
-        this.areaLinkService = areaLinkService;
-        this.abaPackageService = abaPackageService;
-        this.abaSessionService = abaSessionService;
-        this.paymentService = new PaymentService();
+        PaymentService paymentService1 = new PaymentService();
         TabSheet tabSheet = new TabSheet();
         tabSheet.setSizeFull();
         tabSheet.add(Constants.ABA_TITLE, new AdminABAView(abaPackageService, abaSessionService, paymentService));

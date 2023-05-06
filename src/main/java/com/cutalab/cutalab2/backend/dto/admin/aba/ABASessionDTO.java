@@ -77,7 +77,6 @@ public class ABASessionDTO implements Serializable {
 
     public String getFormattedIsOpen() {
         if(isOpen != null) {
-            formattedIsOpen = "";
             formattedIsOpen = isOpen ? "IN CORSO" : "TERMINATA";
         }
         return formattedIsOpen;

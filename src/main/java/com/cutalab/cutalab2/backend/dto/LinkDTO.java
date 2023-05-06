@@ -1,7 +1,5 @@
 package com.cutalab.cutalab2.backend.dto;
 
-import com.cutalab.cutalab2.backend.entity.AreaLinkEntity;
-
 public class LinkDTO {
 
     private Integer id;

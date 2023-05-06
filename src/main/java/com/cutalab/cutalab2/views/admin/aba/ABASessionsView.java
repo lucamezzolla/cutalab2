@@ -7,7 +7,6 @@ import com.cutalab.cutalab2.backend.service.admin.aba.ABASessionService;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -16,7 +15,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -135,7 +133,7 @@ public class ABASessionsView extends Dialog {
         addSessiondialog.add(vl);
         //FOOTER
         Button addButton = new Button(Constants.SAVE, this::onAddSession);
-        Button cancelButton = new Button(Constants.CANCEL, e -> { addSessiondialog.close(); });
+        Button cancelButton = new Button(Constants.CANCEL, e -> addSessiondialog.close());
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addSessiondialog.getFooter().add(cancelButton, addButton);
         //show
@@ -198,5 +196,5 @@ public class ABASessionsView extends Dialog {
 }
 
 interface ClosePackageInterface {
-    public void closePackageListener();
+    void closePackageListener();
 }

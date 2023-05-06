@@ -1,7 +1,6 @@
 package com.cutalab.cutalab2.backend.service;
 
 import com.cutalab.cutalab2.backend.dto.*;
-import com.cutalab.cutalab2.backend.dto.LaboratoryDTO;
 import com.cutalab.cutalab2.backend.entity.LaboratoryAreaEntity;
 import com.cutalab.cutalab2.backend.entity.LaboratoryEntity;
 import com.cutalab.cutalab2.backend.repository.LaboratoryRepository;

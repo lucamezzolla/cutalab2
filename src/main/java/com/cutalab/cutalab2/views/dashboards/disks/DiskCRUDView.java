@@ -32,24 +32,21 @@ import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class DiskCRUDView extends VerticalLayout {
 
-    private StatusService statusService;
-    private DiskService diskService;
+    private final StatusService statusService;
+    private final DiskService diskService;
 
-    private Integer formType;
-    private DiskDTO diskDTO;
+    private final DiskDTO diskDTO;
     private List<HorizontalLayout> layouts;
 
     public DiskCRUDView(DiskService diskService, StatusService statusService, Integer formType, DiskDTO diskDTO) {
         this.diskService = diskService;
         this.statusService = statusService;
-        this.formType = formType;
         this.diskDTO = diskDTO;
         if(formType.equals(Constants.FORM_CREATE)) {
             layouts = createLayouts();
@@ -97,16 +94,12 @@ public class DiskCRUDView extends VerticalLayout {
             dialog.add(grid);
             Button closeButton = new Button(Constants.CLOSE, clickEvent -> {
                 diskDTO.getDiskGenreList().clear();
-                Iterator iterator = grid.getSelectedItems().iterator();
-                while(iterator.hasNext()) {
-                    DiskGenreDTO diskGenreDTO = (DiskGenreDTO) iterator.next();
+                for (DiskGenreDTO diskGenreDTO : grid.getSelectedItems()) {
                     diskDTO.getDiskGenreList().add(diskGenreDTO);
                 }
                 dialog.close();
             });
-            Iterator iterator = diskDTO.getDiskGenreList().iterator();
-            while(iterator.hasNext()) {
-                DiskGenreDTO diskGenreDTO = (DiskGenreDTO) iterator.next();
+            for (DiskGenreDTO diskGenreDTO : diskDTO.getDiskGenreList()) {
                 grid.select(diskGenreDTO);
             }
             closeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -125,20 +118,16 @@ public class DiskCRUDView extends VerticalLayout {
             StyleFilter styleFilter = new StyleFilter(dataView);
             grid.getHeaderRows().clear();
             HeaderRow headerRow = grid.appendHeaderRow();
-            headerRow.getCell(styleColumn).setComponent(createFilterHeader("Comincia a scrivere lo stile...", styleFilter::setName));
+            headerRow.getCell(styleColumn).setComponent(createFilterHeader(styleFilter::setName));
             dialog.add(grid);
             Button closeButton = new Button(Constants.CLOSE, clickEvent -> {
                 diskDTO.getDiskStyleList().clear();
-                Iterator iterator = grid.getSelectedItems().iterator();
-                while(iterator.hasNext()) {
-                    DiskStyleDTO diskStyleDTO = (DiskStyleDTO) iterator.next();
+                for (DiskStyleDTO diskStyleDTO : grid.getSelectedItems()) {
                     diskDTO.getDiskStyleList().add(diskStyleDTO);
                 }
                 dialog.close();
             });
-            Iterator iterator = diskDTO.getDiskStyleList().iterator();
-            while(iterator.hasNext()) {
-                DiskStyleDTO diskStyleDTO = (DiskStyleDTO) iterator.next();
+            for (DiskStyleDTO diskStyleDTO : diskDTO.getDiskStyleList()) {
                 grid.select(diskStyleDTO);
             }
             closeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -184,29 +173,29 @@ public class DiskCRUDView extends VerticalLayout {
                 coverImage.setSrc(diskDTO.getCover());
             }
             dialog.add(coverImage);
-            Button cancelButton = new Button(Constants.CLOSE, clickEvent -> { dialog.close(); });
+            Button cancelButton = new Button(Constants.CLOSE, clickEvent -> dialog.close());
             dialog.getFooter().add(cancelButton);
         });
         coverButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         coverButton.setEnabled(diskDTO.getCover() != null);
-        String note = "";
+        String note;
         if(diskDTO.getNote() == null || (diskDTO.getNote() != null && diskDTO.getNote().isEmpty()))  {
             note = "Nessuna";
         } else {
             note = diskDTO.getNote();
         }
-        String genres = "";
+        StringBuilder genres = new StringBuilder();
         for (int i = 0; i < diskDTO.getDiskGenreList().size(); i++) {
-            genres += diskDTO.getDiskGenreList().get(i).getName();
+            genres.append(diskDTO.getDiskGenreList().get(i).getName());
             if (i < diskDTO.getDiskGenreList().size() - 1) {
-                genres += ", ";
+                genres.append(", ");
             }
         }
-        String styles = "";
+        StringBuilder styles = new StringBuilder();
         for (int i = 0; i < diskDTO.getDiskStyleList().size(); i++) {
-            styles += diskDTO.getDiskStyleList().get(i).getName();
+            styles.append(diskDTO.getDiskStyleList().get(i).getName());
             if (i < diskDTO.getDiskStyleList().size() - 1) {
-                styles += ", ";
+                styles.append(", ");
             }
         }
         LinkedHashMap<String, Component> map = new LinkedHashMap<>();
@@ -221,8 +210,8 @@ public class DiskCRUDView extends VerticalLayout {
         map.put(Constants.DISK_DETAIL_DISK_STATUS, new Text(diskDTO.getDiskStatus().getName()));
         map.put(Constants.DISK_DETAIL_COVER_STATUS, new Text(diskDTO.getCoverStatus().getName()));
         map.put(Constants.DISK_DETAIL_NOTE, new Text(note));
-        map.put(Constants.DISK_DETAIL_GENRE, new Text(genres));
-        map.put(Constants.DISK_DETAIL_STYLE, new Text(styles));
+        map.put(Constants.DISK_DETAIL_GENRE, new Text(genres.toString()));
+        map.put(Constants.DISK_DETAIL_STYLE, new Text(styles.toString()));
         for (String key : map.keySet()) {
             Html keyText = new Html("<b>"+key+"</b>");
             keyText.getElement().getStyle().set("width", "180px");
@@ -269,7 +258,7 @@ public class DiskCRUDView extends VerticalLayout {
                 grid.getSelectionModel().select(genreDTO);
             }
             dialog.add(grid);
-            Button cancelButton = new Button(Constants.CANCEL, clickEvent -> { dialog.close(); });
+            Button cancelButton = new Button(Constants.CANCEL, clickEvent -> dialog.close());
             Button saveButton = new Button(Constants.SAVE, clickEvent -> {
                 diskDTO.getDiskGenreList().clear();
                 List<DiskGenreDTO> selectedItems = new ArrayList<>(grid.getSelectedItems());
@@ -292,14 +281,12 @@ public class DiskCRUDView extends VerticalLayout {
             StyleFilter styleFilter = new StyleFilter(dataView);
             grid.getHeaderRows().clear();
             HeaderRow headerRow = grid.appendHeaderRow();
-            headerRow.getCell(styleColumn).setComponent(createFilterHeader("Comincia a scrivere lo stile...", styleFilter::setName));
-            if(diskDTO != null) {
-                for(DiskStyleDTO styleDTO : diskDTO.getDiskStyleList()) {
-                    grid.getSelectionModel().select(styleDTO);
-                }
+            headerRow.getCell(styleColumn).setComponent(createFilterHeader(styleFilter::setName));
+            for (DiskStyleDTO styleDTO : diskDTO.getDiskStyleList()) {
+                grid.getSelectionModel().select(styleDTO);
             }
             dialog.add(grid);
-            Button cancelButton = new Button(Constants.CANCEL, clickEvent -> { dialog.close(); });
+            Button cancelButton = new Button(Constants.CANCEL, clickEvent -> dialog.close());
             Button saveButton = new Button(Constants.SAVE, clickEvent -> {
                 diskDTO.getDiskStyleList().clear();
                 List<DiskStyleDTO> selectedItems = new ArrayList<>(grid.getSelectedItems());
@@ -354,9 +341,9 @@ public class DiskCRUDView extends VerticalLayout {
         return newDiskDTO;
     }
 
-    private Component createFilterHeader(String placeholder, Consumer<String> filterChangeConsumer) {
+    private Component createFilterHeader(Consumer<String> filterChangeConsumer) {
         TextField textField = new TextField();
-        textField.setPlaceholder(placeholder);
+        textField.setPlaceholder("Comincia a scrivere lo stile...");
         textField.setValueChangeMode(ValueChangeMode.EAGER);
         textField.setClearButtonVisible(true);
         textField.addThemeVariants(TextFieldVariant.LUMO_SMALL);
@@ -403,8 +390,7 @@ class StyleFilter {
     }
 
     public boolean test(DiskStyleDTO diskStyleDTO) {
-        boolean matchesName = matches(diskStyleDTO.getName(), name);
-        return matchesName;
+        return matches(diskStyleDTO.getName(), name);
     }
 
     private boolean matches(String value, String searchTerm) {

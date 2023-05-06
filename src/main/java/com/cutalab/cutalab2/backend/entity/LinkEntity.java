@@ -18,7 +18,7 @@ public class LinkEntity implements Serializable {
     private String url;
 
     @OneToOne()
-    @JoinColumn(referencedColumnName="id", name = "area_link_id", insertable = true, updatable = true, nullable=false)
+    @JoinColumn(referencedColumnName="id", name = "area_link_id", nullable=false)
     private AreaLinkEntity areaLinkEntity;
 
     public Integer getId() {

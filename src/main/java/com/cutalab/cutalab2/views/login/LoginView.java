@@ -3,11 +3,8 @@ package com.cutalab.cutalab2.views.login;
 import com.cutalab.cutalab2.utils.Constants;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
@@ -21,26 +18,12 @@ public class LoginView extends Div implements BeforeEnterObserver {
 
     private final LoginForm loginForm = new LoginForm();
 
-    /*
-    public LoginView(){
-        addClassName("login-view");
-        setSizeFull();
-        setAlignItems(Alignment.CENTER);
-        setJustifyContentMode(JustifyContentMode.CENTER);
-        login.setAction("login");
-        add(new H1(Constants.APP_TITLE), login);
-    }
-    */
-
     public LoginView() {
-        // See login-rich-content.css
         addClassName("login-rich-content");
         loginForm.setForgotPasswordButtonVisible(false);
         loginForm.getElement().getThemeList().add("dark");
         loginForm.setAction("login");
         add(loginForm);
-        // Prevent the example from stealing focus when browsing the
-        // documentation
         loginForm.getElement().setAttribute("no-autofocus", "");
     }
 

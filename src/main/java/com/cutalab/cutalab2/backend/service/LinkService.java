@@ -44,22 +44,22 @@ public class LinkService {
         return list1;
     }
 
-    public LinkEntity create(LinkDTO linkDTO) {
+    public void create(LinkDTO linkDTO) {
         LinkEntity linkEntity = new LinkEntity();
         AreaLinkEntity areaLinkEntity = new AreaLinkEntity();
         BeanUtils.copyProperties(linkDTO.getAreaLinkDTO(), areaLinkEntity);
         BeanUtils.copyProperties(linkDTO, linkEntity);
         linkEntity.setAreaLinkEntity(areaLinkEntity);
-        return linkRepository.saveAndFlush(linkEntity);
+        linkRepository.saveAndFlush(linkEntity);
     }
 
-    public LinkEntity update(LinkDTO linkDTO) {
+    public void update(LinkDTO linkDTO) {
         LinkEntity linkEntity = new LinkEntity();
         AreaLinkEntity areaLinkEntity = new AreaLinkEntity();
         BeanUtils.copyProperties(linkDTO.getAreaLinkDTO(), areaLinkEntity);
         BeanUtils.copyProperties(linkDTO, linkEntity);
         linkEntity.setAreaLinkEntity(areaLinkEntity);
-        return linkRepository.saveAndFlush(linkEntity);
+        linkRepository.saveAndFlush(linkEntity);
     }
 
     public void remove(LinkDTO linkDTO) {

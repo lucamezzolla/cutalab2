@@ -17,10 +17,7 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 @PageTitle(Constants.MENU_MOMENTS + " | " + Constants.APP_AUTHOR)
 public class MomentsView extends VerticalLayout {
 
-    private MomentService momentService;
-
     public MomentsView(MomentService momentService) {
-        this.momentService = momentService;
         H2 title = new H2(Constants.MENU_MOMENTS);
         Grid<MomentDTO> grid = new Grid<>(MomentDTO.class, false);
         grid.setClassNameGenerator(item -> "vaadin-grid-links");

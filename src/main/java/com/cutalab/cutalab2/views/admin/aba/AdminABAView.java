@@ -58,14 +58,14 @@ public class AdminABAView extends VerticalLayout implements ComponentEventListen
         H2 title = new H2(Constants.ABA_TITLE);
         Button addPackageButton = new Button(new Icon(VaadinIcon.PLUS));
         addPackageButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_SMALL);
-        addPackageButton.addClickListener(e -> { addPackageAction(); });
+        addPackageButton.addClickListener(e -> addPackageAction());
         grid = new Grid<>(ABAPackageDTO.class, false);
         grid.addItemClickListener(this);
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.setSizeFull();
-        grid.addColumn(createCol1()).setHeader(Constants.ABA_GRID_COL_1).setFlexGrow(1);;
-        grid.addColumn(ABAPackageDTO::getHours).setHeader(Constants.ABA_GRID_COL_2).setFlexGrow(1);;
-        grid.addColumn(createCol3()).setHeader(Constants.ABA_GRID_COL_3).setFlexGrow(1);;
+        grid.addColumn(createCol1()).setHeader(Constants.ABA_GRID_COL_1).setFlexGrow(1);
+        grid.addColumn(ABAPackageDTO::getHours).setHeader(Constants.ABA_GRID_COL_2).setFlexGrow(1);
+        grid.addColumn(createCol3()).setHeader(Constants.ABA_GRID_COL_3).setFlexGrow(1);
         grid.addColumn(new ComponentRenderer<>(abaPackageDTO -> {
             Html html;
             if (abaPackageDTO.getOpen()) {
@@ -113,7 +113,7 @@ public class AdminABAView extends VerticalLayout implements ComponentEventListen
         addPackageDialog.add(vl);
         //FOOTER
         Button addButton = new Button(Constants.SAVE, this::onAddPackage);
-        Button cancelButton = new Button(Constants.CANCEL, e -> { addPackageDialog.close(); });
+        Button cancelButton = new Button(Constants.CANCEL, e -> addPackageDialog.close());
         addButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         addPackageDialog.getFooter().add(cancelButton, addButton);
         //FILL

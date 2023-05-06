@@ -1,6 +1,5 @@
 package com.cutalab.cutalab2.backend.entity.admin.aba;
 
-import com.cutalab.cutalab2.backend.dto.admin.payments.PPaymentDTO;
 import com.cutalab.cutalab2.backend.entity.admin.payments.PPaymentEntity;
 
 import javax.persistence.*;
@@ -27,7 +26,7 @@ public class ABAPackageEntity implements Serializable {
     private Boolean isOpen;
 
     @OneToOne
-    @JoinColumn(referencedColumnName = "id", name = "payment_id", insertable = true, updatable = true, nullable = false)
+    @JoinColumn(referencedColumnName = "id", name = "payment_id", nullable = false)
     private PPaymentEntity payment;
 
     public Integer getId() {

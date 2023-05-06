@@ -19,7 +19,7 @@ public class UserEntity implements Serializable {
     @Column(name="password", nullable = false)
     private String password;
 
-    @Column(name="role", nullable = true)
+    @Column(name="role")
     private String role;
 
     public Integer getId() {

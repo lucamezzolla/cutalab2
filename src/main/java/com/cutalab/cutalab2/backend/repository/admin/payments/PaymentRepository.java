@@ -1,6 +1,5 @@
 package com.cutalab.cutalab2.backend.repository.admin.payments;
 
-import com.cutalab.cutalab2.backend.dto.admin.payments.PPaymentDTO;
 import com.cutalab.cutalab2.backend.entity.admin.payments.PPaymentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

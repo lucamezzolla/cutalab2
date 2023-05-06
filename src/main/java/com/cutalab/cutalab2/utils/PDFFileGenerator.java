@@ -16,12 +16,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Component
 public class PDFFileGenerator {
 
     public File writeDisksToPdf(List<DiskDTO> disks) {
-        String fileName = String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))+".pdf";
+        String fileName = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) +".pdf";
         File temp = new File(fileName);
         try {
             Document document = new Document(PageSize.A3.rotate());
@@ -35,7 +36,7 @@ public class PDFFileGenerator {
             //float bigCol = 96 / 9;
             PdfPTable table = new PdfPTable(new float[] { 23, 12, 12, 8, 12, 5, 12, 12 });
             table.setWidthPercentage(100f);
-            for(int aw = 0; aw < 1; aw++) {
+            IntStream.range(0, 1).forEach(aw -> {
                 table.addCell("TITOLO");
                 table.addCell("AUTORE");
                 table.addCell("ETICHETTA");
@@ -44,16 +45,16 @@ public class PDFFileGenerator {
                 table.addCell("ANNO");
                 table.addCell("STATO DISCO");
                 table.addCell("STATO COPERTINA");
-            }
-            for(int aw = 0; aw < disks.size(); aw++){
-                table.addCell(disks.get(aw).getTitle());
-                table.addCell(disks.get(aw).getAuthor());
-                table.addCell(disks.get(aw).getLabel());
-                table.addCell(disks.get(aw).getReprint());
-                table.addCell(String.valueOf(disks.get(aw).getPresumedValue()));
-                table.addCell(disks.get(aw).getYear());
-                table.addCell(disks.get(aw).getDiskStatus().getName());
-                table.addCell(disks.get(aw).getCoverStatus().getName());
+            });
+            for (DiskDTO disk : disks) {
+                table.addCell(disk.getTitle());
+                table.addCell(disk.getAuthor());
+                table.addCell(disk.getLabel());
+                table.addCell(disk.getReprint());
+                table.addCell(String.valueOf(disk.getPresumedValue()));
+                table.addCell(disk.getYear());
+                table.addCell(disk.getDiskStatus().getName());
+                table.addCell(disk.getCoverStatus().getName());
             }
             document.add(table);
             document.close();

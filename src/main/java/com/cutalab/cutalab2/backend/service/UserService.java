@@ -32,7 +32,7 @@ public class UserService {
     }
 
     public UserEntity getById(Integer id) {
-        return userRepository.findById(id).get();
+        return userRepository.findById(id).isPresent() ? userRepository.findById(id).get() : null;
     }
 
     public void insert(UserEntity UserEntity) {

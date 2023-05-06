@@ -19,7 +19,7 @@ public class DiskEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "title", nullable = false, unique = false, length = 80)
+    @Column(name = "title", nullable = false, length = 80)
     private String title;
 
     @Column(name = "author", nullable = false, length = 80)
@@ -31,7 +31,7 @@ public class DiskEntity implements Serializable {
     @Column(name = "reprint", nullable = false, length = 25)
     private String reprint;
 
-    @Column(name = "label", nullable = false, length = 255)
+    @Column(name = "label", nullable = false)
     private String label;
 
     @Column(name = "presumed_value", nullable = false, precision = 10, scale = 2)
@@ -49,20 +49,20 @@ public class DiskEntity implements Serializable {
     private List<DiskStyleEntity> diskStyleList = new ArrayList<>();
 
     @ManyToOne()
-    @JoinColumn(referencedColumnName="id", name="cover_status", insertable=true, updatable=true, nullable=false)
+    @JoinColumn(referencedColumnName="id", name="cover_status", nullable=false)
     private StatusEntity coverStatus;
 
     @ManyToOne()
-    @JoinColumn(referencedColumnName="id", name="disk_status", insertable=true, updatable=true, nullable=false)
+    @JoinColumn(referencedColumnName="id", name="disk_status", nullable=false)
     private StatusEntity diskStatus;
 
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 
-    @Column(name="note", columnDefinition="LONGTEXT", nullable = true)
+    @Column(name="note", columnDefinition="LONGTEXT")
     private String note;
 
-    @Column(name = "cover", nullable = true, length = 255)
+    @Column(name = "cover")
     private String cover;
 
     public Integer getId() {

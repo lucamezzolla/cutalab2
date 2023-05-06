@@ -2,7 +2,6 @@ package com.cutalab.cutalab2.backend.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Table(name="link_area")

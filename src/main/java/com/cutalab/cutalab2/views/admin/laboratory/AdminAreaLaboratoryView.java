@@ -4,7 +4,6 @@ import com.cutalab.cutalab2.backend.dto.LaboratoryAreaDTO;
 import com.cutalab.cutalab2.backend.entity.LaboratoryAreaEntity;
 import com.cutalab.cutalab2.backend.service.LaboratoryAreaService;
 import com.cutalab.cutalab2.utils.ConfirmDialog;
-import com.cutalab.cutalab2.utils.ConfirmDialogInterface;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
@@ -15,7 +14,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.grid.ItemClickEvent;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -91,7 +89,7 @@ public class AdminAreaLaboratoryView extends VerticalLayout implements Component
     }
 
     public void onAddTitleButton(ClickEvent<Button> buttonClickEvent) {
-        Button eventButton = (Button) buttonClickEvent.getSource();
+        Button eventButton = buttonClickEvent.getSource();
         if(eventButton.equals(addTitleButton)) {
             addAreaLaboratory();
         }
@@ -124,19 +122,16 @@ public class AdminAreaLaboratoryView extends VerticalLayout implements Component
         Button cancelButton = new Button(Constants.CANCEL, e -> dialog.close());
         Button removeButton = new Button(new Icon(VaadinIcon.TRASH), e -> {
             ConfirmDialog confirmDialog = new ConfirmDialog();
-            confirmDialog.setConfirmDialogListener(new ConfirmDialogInterface() {
-                @Override
-                public void confirmDialogListener() {
-                    try {
-                        laboratoryAreaService.remove(laboratoryAreaDTO);
-                        Constants.NOTIFICATION_DB_SUCCESS();
-                        fillGrid();
-                    } catch(Exception e2) {
-                        Constants.NOTIFICATION_DB_ERROR(e2);
-                    }
-                    confirmDialog.close();
-                    dialog.close();
+            confirmDialog.setConfirmDialogListener(() -> {
+                try {
+                    laboratoryAreaService.remove(laboratoryAreaDTO);
+                    Constants.NOTIFICATION_DB_SUCCESS();
+                    fillGrid();
+                } catch(Exception e2) {
+                    Constants.NOTIFICATION_DB_ERROR(e2);
                 }
+                confirmDialog.close();
+                dialog.close();
             });
             confirmDialog.open();
         });

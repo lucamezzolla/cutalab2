@@ -22,7 +22,7 @@ public class PLoanReturnEntity implements Serializable {
     private String formattedDate;
 
     @ManyToOne()
-    @JoinColumn(referencedColumnName="id", name="p_loan_id", insertable=true, updatable=true, nullable=false)
+    @JoinColumn(referencedColumnName="id", name="p_loan_id", nullable=false)
     private PLoanEntity loan;
 
     @Column(name = "total", nullable = false)

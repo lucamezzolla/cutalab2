@@ -45,14 +45,14 @@ public class AreaLinkService {
         return areaLinkDTO;
     }
 
-    public AreaLinkEntity create(AreaLinkEntity areaLinkEntity) {
-        return areaLinkRepository.saveAndFlush(areaLinkEntity);
+    public void create(AreaLinkEntity areaLinkEntity) {
+        areaLinkRepository.saveAndFlush(areaLinkEntity);
     }
 
-    public AreaLinkEntity update(AreaLinkDTO areaLinkDTO) {
+    public void update(AreaLinkDTO areaLinkDTO) {
         AreaLinkEntity areaLinkEntity = new AreaLinkEntity();
         BeanUtils.copyProperties(areaLinkDTO, areaLinkEntity);
-        return areaLinkRepository.saveAndFlush(areaLinkEntity);
+        areaLinkRepository.saveAndFlush(areaLinkEntity);
     }
 
     public void remove(AreaLinkDTO areaLinkDTO) {

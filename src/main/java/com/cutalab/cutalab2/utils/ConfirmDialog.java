@@ -17,12 +17,7 @@ public class ConfirmDialog extends Dialog {
         getFooter().add(new Button(Constants.CANCEL, e -> close()));
         Button removeButton = new Button(Constants.REMOVE);
         removeButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        removeButton.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
-            @Override
-            public void onComponentEvent(ClickEvent<Button> buttonClickEvent) {
-                confirmDialogListener.confirmDialogListener();
-            };
-        });
+        removeButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) buttonClickEvent -> confirmDialogListener.confirmDialogListener());
         getFooter().add(removeButton);
     }
 

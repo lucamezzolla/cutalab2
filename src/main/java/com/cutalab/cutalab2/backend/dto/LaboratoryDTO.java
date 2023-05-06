@@ -1,7 +1,5 @@
 package com.cutalab.cutalab2.backend.dto;
 
-import com.cutalab.cutalab2.backend.entity.LaboratoryAreaEntity;
-
 import java.time.LocalDateTime;
 
 public class LaboratoryDTO {

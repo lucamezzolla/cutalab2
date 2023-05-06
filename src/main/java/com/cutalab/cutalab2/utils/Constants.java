@@ -118,13 +118,13 @@ public class Constants {
     public static final String DB_VALIDATION_INDEX_DISKS_ERROR = "Indicare il nome del proprietario della collezione.";
     public static final String ABA_CLOSE_PACKAGE_ERROR = "Attenzione. Non puoi chiudere un pacchetto quando una o più sessioni sono aperte.";
 
-    public final static void NOTIFICATION_DB_SUCCESS() {
+    public static void NOTIFICATION_DB_SUCCESS() {
         Notification notification = Notification.show(DB_OPERATION_SUCCESS);
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_CONTRAST);
     }
 
-    public final static void NOTIFICATION_DB_ERROR(Exception e) {
+    public static void NOTIFICATION_DB_ERROR(Exception e) {
         String message = e.getMessage().contains("ConstraintViolationException") ? DB_OPERATION_RELATION_ERROR : DB_OPERATION_ERROR;
         Notification notification = Notification.show(message);
         notification.setPosition(Notification.Position.TOP_CENTER);
@@ -132,34 +132,34 @@ public class Constants {
         notification.setDuration(NOTIFICATION_DURATION);
     }
 
-    public final static void NOTIFICATION_DB_VALIDATION_ERROR() {
+    public static void NOTIFICATION_DB_VALIDATION_ERROR() {
         Notification notification = Notification.show(DB_VALIDATION_ERROR);
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         notification.setDuration(NOTIFICATION_DURATION);
     }
 
-    public final static void NOTIFICATION_DB_VALIDATION_DISK_ERROR() {
+    public static void NOTIFICATION_DB_VALIDATION_DISK_ERROR() {
         Notification notification = Notification.show(DB_VALIDATION_DISK_ERROR);
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         notification.setDuration(NOTIFICATION_DURATION);
     }
 
-    public final static void NOTIFICATION_DB_VALIDATION_INDEX_DISKS_ERROR() {
+    public static void NOTIFICATION_DB_VALIDATION_INDEX_DISKS_ERROR() {
         Notification notification = Notification.show(DB_VALIDATION_INDEX_DISKS_ERROR);
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
         notification.setDuration(NOTIFICATION_DURATION);
     }
 
-    public final static void NOTIFICATION_NO_DISK() {
+    public static void NOTIFICATION_NO_DISK() {
         Notification notification = Notification.show(NO_DISKS);
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_CONTRAST);
         notification.setDuration(NOTIFICATION_DURATION);
     }
-    public final static void NOTIFICATION_ABA_CLOSE_PACKAGE_ERROR() {
+    public static void NOTIFICATION_ABA_CLOSE_PACKAGE_ERROR() {
         Notification notification = Notification.show(ABA_CLOSE_PACKAGE_ERROR);
         notification.setPosition(Notification.Position.TOP_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_ERROR);

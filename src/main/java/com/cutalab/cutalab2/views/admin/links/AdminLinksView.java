@@ -5,7 +5,6 @@ import com.cutalab.cutalab2.backend.dto.LinkDTO;
 import com.cutalab.cutalab2.backend.service.AreaLinkService;
 import com.cutalab.cutalab2.backend.service.LinkService;
 import com.cutalab.cutalab2.utils.ConfirmDialog;
-import com.cutalab.cutalab2.utils.ConfirmDialogInterface;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
 import com.vaadin.flow.component.ClickEvent;
@@ -35,16 +34,15 @@ import javax.annotation.security.RolesAllowed;
 @PageTitle(Constants.MENU_ADMIN + " | " + Constants.APP_AUTHOR)
 public class AdminLinksView extends VerticalLayout implements ComponentEventListener<ItemClickEvent<LinkDTO>> {
 
-    private AreaLinkService areaLinkService;
-    private LinkService linkService;
-    private TextField titleTextField;
-    private TextField urlTextField;
-    private ComboBox<AreaLinkDTO> areaLinkCombo;
-    private Button addLinkButton;
-    private Button areaLinkButton;
-    private Grid<LinkDTO> grid;
-    private Dialog dialog;
-    private VerticalLayout dialogLayout;
+    private final AreaLinkService areaLinkService;
+    private final LinkService linkService;
+    private final TextField titleTextField;
+    private final TextField urlTextField;
+    private final ComboBox<AreaLinkDTO> areaLinkCombo;
+    private final Button addLinkButton;
+    private final Grid<LinkDTO> grid;
+    private final Dialog dialog;
+    private final VerticalLayout dialogLayout;
 
     public AdminLinksView(AreaLinkService areaLinkService, LinkService linkService) {
         this.areaLinkService = areaLinkService;
@@ -53,10 +51,10 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         titleTextField = new TextField();
         urlTextField = new TextField();
         areaLinkCombo = new ComboBox<>();
-        areaLinkCombo.addFocusListener(e -> { fillAreaLinkCombo(); });
+        areaLinkCombo.addFocusListener(e -> fillAreaLinkCombo());
         areaLinkCombo.setPlaceholder("Area...");
         addLinkButton = new Button(new Icon(VaadinIcon.PLUS), this::onAddLinkButton);
-        areaLinkButton = new Button(Constants.MENU_AREA_LINK, this::onAreaLink);
+        Button areaLinkButton = new Button(Constants.MENU_AREA_LINK, this::onAreaLink);
         areaLinkButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         titleTextField.setPlaceholder("Titolo...");
         urlTextField.setPlaceholder("URL...");
@@ -122,7 +120,7 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
     }
 
     private void onAddLinkButton(ClickEvent<Button> buttonClickEvent) {
-        Button eventButton = (Button) buttonClickEvent.getSource();
+        Button eventButton = buttonClickEvent.getSource();
         if(eventButton.equals(addLinkButton)) {
             addLink();
         }
@@ -173,9 +171,7 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
         });
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button cancelButton = new Button(Constants.CANCEL, e -> dialog.close());
-        Button removeButton = new Button(new Icon(VaadinIcon.TRASH), e -> {
-            removeLink(linkDTO);
-        });
+        Button removeButton = new Button(new Icon(VaadinIcon.TRASH), e -> removeLink(linkDTO));
         removeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_ERROR);
         HorizontalLayout hl = new HorizontalLayout(editTextField, areaLinkDTOField);
         hl.setWidth("100%");
@@ -200,19 +196,16 @@ public class AdminLinksView extends VerticalLayout implements ComponentEventList
 
     private void removeLink(LinkDTO linkDTO) {
         ConfirmDialog confirmDialog = new ConfirmDialog();
-        confirmDialog.setConfirmDialogListener(new ConfirmDialogInterface() {
-            @Override
-            public void confirmDialogListener() {
-                try {
-                    linkService.remove(linkDTO);
-                    Constants.NOTIFICATION_DB_SUCCESS();
-                    fillGrid();
-                } catch(Exception e2) {
-                    Constants.NOTIFICATION_DB_ERROR(e2);
-                }
-                confirmDialog.close();
-                dialog.close();
+        confirmDialog.setConfirmDialogListener(() -> {
+            try {
+                linkService.remove(linkDTO);
+                Constants.NOTIFICATION_DB_SUCCESS();
+                fillGrid();
+            } catch(Exception e2) {
+                Constants.NOTIFICATION_DB_ERROR(e2);
             }
+            confirmDialog.close();
+            dialog.close();
         });
         confirmDialog.open();
     }

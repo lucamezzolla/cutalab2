@@ -23,7 +23,7 @@ public class ABASessionService {
     public ABASessionService() {
         modelMapper = new ModelMapper();
         modelMapper.createTypeMap(ABASessionEntity.class, ABASessionDTO.class)
-            .addMappings(mapper -> mapper.map(src -> src.getABAPackage(), ABASessionDTO::setABAPackage));
+            .addMappings(mapper -> mapper.map(ABASessionEntity::getABAPackage, ABASessionDTO::setABAPackage));
     }
 
     public List<ABASessionDTO> getAll(ABAPackageDTO packageDTO) {

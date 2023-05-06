@@ -17,11 +17,11 @@ public class PLoanEntity implements Serializable {
     private Integer id;
 
     @OneToOne()
-    @JoinColumn(referencedColumnName="id", name="p_registry_id", insertable=true, updatable=true, nullable=false)
+    @JoinColumn(referencedColumnName="id", name="p_registry_id", nullable=false)
     private PRegistryEntity registry;
 
     @OneToOne()
-    @JoinColumn(referencedColumnName="id", name="p_currency_id", insertable=true, updatable=true, nullable=false)
+    @JoinColumn(referencedColumnName="id", name="p_currency_id", nullable=false)
     private PCurrencyEntity currency;
 
     @Column(name = "loan_date", nullable = false)

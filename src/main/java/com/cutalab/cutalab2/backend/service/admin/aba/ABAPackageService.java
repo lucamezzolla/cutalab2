@@ -23,7 +23,7 @@ public class ABAPackageService {
     public ABAPackageService() {
         modelMapper = new ModelMapper();
         modelMapper.createTypeMap(ABAPackageEntity.class, ABAPackageDTO.class)
-            .addMappings(mapper -> mapper.map(src -> src.getPayment(), ABAPackageDTO::setPayment));
+            .addMappings(mapper -> mapper.map(ABAPackageEntity::getPayment, ABAPackageDTO::setPayment));
     }
 
     public List<ABAPackageDTO> getAll() {

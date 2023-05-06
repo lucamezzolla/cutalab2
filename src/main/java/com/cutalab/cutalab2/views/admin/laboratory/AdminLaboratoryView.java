@@ -6,7 +6,6 @@ import com.cutalab.cutalab2.backend.service.LaboratoryAreaService;
 import com.cutalab.cutalab2.backend.service.LaboratoryService;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
-import com.cutalab.cutalab2.views.admin.links.AdminAreaLinkView;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -112,7 +111,7 @@ public class AdminLaboratoryView extends VerticalLayout implements ComponentEven
         if(titleTextField.getValue().isEmpty() || laboratoryAreaDTOComboBox.getValue() == null) {
             Constants.NOTIFICATION_DB_VALIDATION_ERROR();
         } else {
-            Button eventButton = (Button) buttonClickEvent.getSource();
+            Button eventButton = buttonClickEvent.getSource();
             if (eventButton.equals(addTitleButton)) {
                 addAreaLaboratory();
             }

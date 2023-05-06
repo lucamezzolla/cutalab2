@@ -25,12 +25,7 @@ import java.util.List;
 @PageTitle(Constants.MENU_LINKS + " | " + Constants.APP_AUTHOR)
 public class LinksView extends VerticalLayout {
 
-    private LinkService linkService;
-    private AreaLinkService areaLinkService;
-
     public LinksView(LinkService linkService, AreaLinkService areaLinkService) {
-        this.linkService = linkService;
-        this.areaLinkService = areaLinkService;
         H2 title = new H2(Constants.MENU_LINKS);
         add(title);
         setHorizontalComponentAlignment(Alignment.CENTER, title);

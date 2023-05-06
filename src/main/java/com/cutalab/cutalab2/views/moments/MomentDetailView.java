@@ -3,7 +3,6 @@ package com.cutalab.cutalab2.views.moments;
 import com.cutalab.cutalab2.backend.dto.MomentDTO;
 import com.cutalab.cutalab2.utils.Constants;
 import com.cutalab.cutalab2.views.MainLayout;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;

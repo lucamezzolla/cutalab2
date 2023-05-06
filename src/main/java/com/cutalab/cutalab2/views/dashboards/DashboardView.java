@@ -19,14 +19,7 @@ import javax.annotation.security.PermitAll;
 @PageTitle(Constants.MENU_DASHBOARDS + " | " + Constants.APP_AUTHOR)
 public class DashboardView extends VerticalLayout {
 
-    private StatusService statusService;
-    private UserService userService;
-    private DiskService diskService;
-
     public DashboardView(StatusService statusService, UserService userService, DiskService diskService) {
-        this.statusService = statusService;
-        this.userService = userService;
-        this.diskService = diskService;
         TabSheet tabSheet = new TabSheet();
         tabSheet.setSizeFull();
         tabSheet.add(Constants.MENU_DASHBOARDS_DISKS, new DiskView(statusService, userService, diskService));

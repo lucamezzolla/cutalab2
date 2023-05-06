@@ -1,8 +1,5 @@
 package com.cutalab.cutalab2.backend.dto.dashboards.disks;
 
-import com.cutalab.cutalab2.backend.entity.dashboards.disks.DiskGenreEntity;
-import com.cutalab.cutalab2.backend.entity.dashboards.disks.DiskStyleEntity;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;

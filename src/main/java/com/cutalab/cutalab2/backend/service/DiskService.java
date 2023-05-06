@@ -14,7 +14,6 @@ import com.cutalab.cutalab2.backend.repository.DiskRepository;
 import com.cutalab.cutalab2.backend.repository.DiskStyleRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -64,18 +63,18 @@ public class DiskService {
     }
 
     public List<DiskDTO> findDisks(Integer offset, String title, String author, DiskGenreDTO diskGenreDTO, DiskStyleDTO diskStyleDTO, UserDTO userDTO) {
-        List<DiskEntity> list1 = new ArrayList<>();
+        List<DiskEntity> list1;
         if (diskGenreDTO == null && diskStyleDTO == null) {
             list1 = diskRepository.search(offset, title, author, userDTO.getId());
         } else if (diskGenreDTO != null && diskStyleDTO == null) {
             DiskGenreEntity diskGenreEntity = new DiskGenreEntity();
             BeanUtils.copyProperties(diskGenreDTO, diskGenreEntity);
             list1 = diskRepository.search(offset,title, author, diskGenreEntity, userDTO.getId());
-        } else if (diskGenreDTO == null && diskStyleDTO != null) {
+        } else if (diskGenreDTO == null) {
             DiskStyleEntity diskStyleEntity = new DiskStyleEntity();
             BeanUtils.copyProperties(diskStyleDTO, diskStyleEntity);
             list1 = diskRepository.search(offset,title, author, diskStyleEntity, userDTO.getId());
-        } else if (diskGenreDTO != null && diskStyleDTO != null) {
+        } else {
             DiskGenreEntity diskGenreEntity = new DiskGenreEntity();
             DiskStyleEntity diskStyleEntity = new DiskStyleEntity();
             BeanUtils.copyProperties(diskGenreDTO, diskGenreEntity);
@@ -92,16 +91,14 @@ public class DiskService {
             List<DiskStyleDTO> listStyleDTO = new ArrayList<>();
             BeanUtils.copyProperties(d.getDiskStatus(), statusDTO1);
             BeanUtils.copyProperties(d.getCoverStatus(), statusDTO2);
-            Iterator iterator1 = d.getDiskGenreList().iterator();
-            while(iterator1.hasNext()) {
+            for (DiskGenreEntity diskGenreEntity : d.getDiskGenreList()) {
                 DiskGenreDTO dto = new DiskGenreDTO();
-                BeanUtils.copyProperties(iterator1.next(), dto);
+                BeanUtils.copyProperties(diskGenreEntity, dto);
                 listGenreDTO.add(dto);
             }
-            Iterator iterator2 = d.getDiskStyleList().iterator();
-            while(iterator2.hasNext()) {
+            for (DiskStyleEntity diskStyleEntity : d.getDiskStyleList()) {
                 DiskStyleDTO dto = new DiskStyleDTO();
-                BeanUtils.copyProperties(iterator2.next(), dto);
+                BeanUtils.copyProperties(diskStyleEntity, dto);
                 listStyleDTO.add(dto);
             }
             diskDTO.setDiskStatus(statusDTO1);
@@ -134,16 +131,14 @@ public class DiskService {
             List<DiskStyleDTO> listStyleDTO = new ArrayList<>();
             BeanUtils.copyProperties(d.getDiskStatus(), statusDTO1);
             BeanUtils.copyProperties(d.getCoverStatus(), statusDTO2);
-            Iterator iterator1 = d.getDiskGenreList().iterator();
-            while(iterator1.hasNext()) {
+            for (DiskGenreEntity diskGenreEntity : d.getDiskGenreList()) {
                 DiskGenreDTO dto = new DiskGenreDTO();
-                BeanUtils.copyProperties(iterator1.next(), dto);
+                BeanUtils.copyProperties(diskGenreEntity, dto);
                 listGenreDTO.add(dto);
             }
-            Iterator iterator2 = d.getDiskStyleList().iterator();
-            while(iterator2.hasNext()) {
+            for (DiskStyleEntity diskStyleEntity : d.getDiskStyleList()) {
                 DiskStyleDTO dto = new DiskStyleDTO();
-                BeanUtils.copyProperties(iterator2.next(), dto);
+                BeanUtils.copyProperties(diskStyleEntity, dto);
                 listStyleDTO.add(dto);
             }
             diskDTO.setDiskStatus(statusDTO1);
@@ -174,16 +169,14 @@ public class DiskService {
         List<DiskStyleDTO> listStyleDTO = new ArrayList<>();
         BeanUtils.copyProperties(diskEntity.getDiskStatus(), statusDTO1);
         BeanUtils.copyProperties(diskEntity.getCoverStatus(), statusDTO2);
-        Iterator iterator1 = diskEntity.getDiskGenreList().iterator();
-        while(iterator1.hasNext()) {
+        for (DiskGenreEntity diskGenreEntity : diskEntity.getDiskGenreList()) {
             DiskGenreDTO dto = new DiskGenreDTO();
-            BeanUtils.copyProperties(iterator1.next(), dto);
+            BeanUtils.copyProperties(diskGenreEntity, dto);
             listGenreDTO.add(dto);
         }
-        Iterator iterator2 = diskEntity.getDiskStyleList().iterator();
-        while(iterator2.hasNext()) {
+        for (DiskStyleEntity diskStyleEntity : diskEntity.getDiskStyleList()) {
             DiskStyleDTO dto = new DiskStyleDTO();
-            BeanUtils.copyProperties(iterator2.next(), dto);
+            BeanUtils.copyProperties(diskStyleEntity, dto);
             listStyleDTO.add(dto);
         }
         diskDTO.setDiskStatus(statusDTO1);
@@ -233,10 +226,10 @@ public class DiskService {
 
         DiskEntity diskEntity = diskRepository.getReferenceById(diskDTO.getId());
 
-        Iterator it = diskEntity.getDiskGenreList().iterator();
+        Iterator<DiskGenreEntity> it = diskEntity.getDiskGenreList().iterator();
         outerloop:
         while(it.hasNext()) {
-            DiskGenreEntity d = (DiskGenreEntity) it.next();
+            DiskGenreEntity d = it.next();
             for(DiskGenreDTO diskGenreDTO : diskDTO.getDiskGenreList()) {
                 if(diskGenreDTO.getId().equals(d.getId())) {
                     break outerloop;
@@ -245,10 +238,10 @@ public class DiskService {
             it.remove();
             d.setDisksList(null);
         }
-        Iterator it2 = diskEntity.getDiskStyleList().iterator();
+        Iterator<DiskStyleEntity> it2 = diskEntity.getDiskStyleList().iterator();
         outerloop:
         while(it2.hasNext()) {
-            DiskStyleEntity d = (DiskStyleEntity) it2.next();
+            DiskStyleEntity d = it2.next();
             for(DiskStyleDTO diskStyleDTO : diskDTO.getDiskStyleList()) {
                 if(diskStyleDTO.getId().equals(d.getId())) {
                     break outerloop;
@@ -324,18 +317,17 @@ public class DiskService {
             DiskGenreEntity diskGenreEntity = new DiskGenreEntity();
             BeanUtils.copyProperties(diskGenreDTO, diskGenreEntity);
             return diskRepository.searchCount(title, author, diskGenreEntity, userDTO.getId());
-        } else if (diskGenreDTO == null && diskStyleDTO != null) {
+        } else if (diskGenreDTO == null) {
             DiskStyleEntity diskStyleEntity = new DiskStyleEntity();
             BeanUtils.copyProperties(diskStyleDTO, diskStyleEntity);
             return diskRepository.searchCount(title, author, diskStyleEntity, userDTO.getId());
-        } else if (diskGenreDTO != null && diskStyleDTO != null) {
+        } else {
             DiskGenreEntity diskGenreEntity = new DiskGenreEntity();
             DiskStyleEntity diskStyleEntity = new DiskStyleEntity();
             BeanUtils.copyProperties(diskGenreDTO, diskGenreEntity);
             BeanUtils.copyProperties(diskStyleDTO, diskStyleEntity);
             return diskRepository.searchCount(title, author, diskGenreEntity, diskStyleEntity, userDTO.getId());
         }
-        return 0;
     }
 
 }

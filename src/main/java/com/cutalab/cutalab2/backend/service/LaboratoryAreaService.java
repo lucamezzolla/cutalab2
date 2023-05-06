@@ -1,7 +1,6 @@
 package com.cutalab.cutalab2.backend.service;
 
 import com.cutalab.cutalab2.backend.dto.LaboratoryAreaDTO;
-import com.cutalab.cutalab2.backend.entity.AreaLinkEntity;
 import com.cutalab.cutalab2.backend.entity.LaboratoryAreaEntity;
 import com.cutalab.cutalab2.backend.repository.LaboratoryAreaRepositiory;
 import org.springframework.beans.BeanUtils;
@@ -46,14 +45,14 @@ public class LaboratoryAreaService {
         return laboratoryAreaDTO;
     }
 
-    public LaboratoryAreaEntity create(LaboratoryAreaEntity laboratoryAreaEntity) {
-        return laboratoryAreaRepositiory.saveAndFlush(laboratoryAreaEntity);
+    public void create(LaboratoryAreaEntity laboratoryAreaEntity) {
+        laboratoryAreaRepositiory.saveAndFlush(laboratoryAreaEntity);
     }
 
-    public LaboratoryAreaEntity update(LaboratoryAreaDTO laboratoryAreaDTO) {
+    public void update(LaboratoryAreaDTO laboratoryAreaDTO) {
         LaboratoryAreaEntity laboratoryAreaEntity = new LaboratoryAreaEntity();
         BeanUtils.copyProperties(laboratoryAreaDTO, laboratoryAreaEntity);
-        return laboratoryAreaRepositiory.saveAndFlush(laboratoryAreaEntity);
+        laboratoryAreaRepositiory.saveAndFlush(laboratoryAreaEntity);
     }
 
     public void remove(LaboratoryAreaDTO laboratoryAreaDTO) {

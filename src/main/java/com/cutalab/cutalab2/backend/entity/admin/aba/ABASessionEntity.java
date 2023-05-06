@@ -27,7 +27,7 @@ public class ABASessionEntity implements Serializable {
     private String paymentFormattedDate;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "id", name = "package_id", insertable = true, updatable = true, nullable = false)
+    @JoinColumn(referencedColumnName = "id", name = "package_id", nullable = false)
     private ABAPackageEntity ABAPackage;
 
     public String getPaymentFormattedDate() {

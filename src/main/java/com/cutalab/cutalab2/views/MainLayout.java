@@ -1,6 +1,5 @@
 package com.cutalab.cutalab2.views;
 
-import com.cutalab.cutalab2.backend.service.SecurityService;
 import com.cutalab.cutalab2.backend.service.*;
 import com.cutalab.cutalab2.backend.service.admin.aba.ABAPackageService;
 import com.cutalab.cutalab2.backend.service.admin.aba.ABASessionService;
@@ -34,20 +33,20 @@ import com.vaadin.flow.router.RouterLink;
 @CssImport(themeFor = "vaadin-menu-bar", value = "/css/styles.css")
 public class MainLayout extends AppLayout implements AppShellConfigurator {
 
-    private StatusService statusService;
-    private MomentService momentService;
-    private LinkService linkService;
-    private AreaLinkService areaLinkService;
-    private SecurityService securityService;
-    private DiskService diskService;
-    private UserService userService;
-    private LaboratoryAreaService laboratoryAreaService;
-    private LaboratoryService laboratoryService;
-    private ABAPackageService abaPackageService;
-    private ABASessionService abaSessionService;
+    private final StatusService statusService;
+    private final MomentService momentService;
+    private final LinkService linkService;
+    private final AreaLinkService areaLinkService;
+    private final SecurityService securityService;
+    private final DiskService diskService;
+    private final UserService userService;
+    private final LaboratoryAreaService laboratoryAreaService;
+    private final LaboratoryService laboratoryService;
+    private final ABAPackageService abaPackageService;
+    private final ABASessionService abaSessionService;
     private final PaymentService paymentService;
-    private boolean isLoggedUser = false;
-    private boolean isLoggedAdmin = false;
+    private final boolean isLoggedUser;
+    private final boolean isLoggedAdmin;
 
     public MainLayout(
         StatusService statusService,
@@ -112,27 +111,15 @@ public class MainLayout extends AppLayout implements AppShellConfigurator {
         menuBar.setWidth("100%");
 
         if (isLoggedAdmin) {
-            MenuItem adminItem = menuBar.addItem(Constants.MENU_ADMIN, menuItemClickEvent -> {
-                this.setContent(new AdminView(laboratoryAreaService, laboratoryService, linkService, areaLinkService, abaPackageService, abaSessionService, paymentService));
-            });
+            MenuItem adminItem = menuBar.addItem(Constants.MENU_ADMIN, menuItemClickEvent -> this.setContent(new AdminView(laboratoryAreaService, laboratoryService, linkService, areaLinkService, abaPackageService, abaSessionService, paymentService)));
         }
         if(isLoggedUser) {
-            MenuItem dashboardsItem = menuBar.addItem(Constants.MENU_DASHBOARDS, menuItemClickEvent -> {
-                this.setContent(new DashboardView(statusService, userService, diskService));
-            });
+            MenuItem dashboardsItem = menuBar.addItem(Constants.MENU_DASHBOARDS, menuItemClickEvent -> this.setContent(new DashboardView(statusService, userService, diskService)));
         }
-        MenuItem laboratoryItem = menuBar.addItem(Constants.MENU_LABORATORY, menuItemClickEvent -> {
-            this.setContent(new LaboratoryView());
-        });
-        MenuItem momentsItem = menuBar.addItem(Constants.MENU_MOMENTS, menuItemClickEvent -> {
-            this.setContent(new MomentsView(momentService));
-        });
-        MenuItem contactsItem = menuBar.addItem(Constants.MENU_CONTACTS, menuItemClickEvent -> {
-            this.setContent(new ContactsView());
-        });
-        MenuItem linksItem = menuBar.addItem(Constants.MENU_LINKS, menuItemClickEvent -> {
-            this.setContent(new LinksView(linkService, areaLinkService));
-        });
+        MenuItem laboratoryItem = menuBar.addItem(Constants.MENU_LABORATORY, menuItemClickEvent -> this.setContent(new LaboratoryView()));
+        MenuItem momentsItem = menuBar.addItem(Constants.MENU_MOMENTS, menuItemClickEvent -> this.setContent(new MomentsView(momentService)));
+        MenuItem contactsItem = menuBar.addItem(Constants.MENU_CONTACTS, menuItemClickEvent -> this.setContent(new ContactsView()));
+        MenuItem linksItem = menuBar.addItem(Constants.MENU_LINKS, menuItemClickEvent -> this.setContent(new LinksView(linkService, areaLinkService)));
         menuBar.setOpenOnHover(false);
         addToDrawer(new VerticalLayout(menuBar));
     }

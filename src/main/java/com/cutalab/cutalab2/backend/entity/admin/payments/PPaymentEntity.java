@@ -42,15 +42,15 @@ public class PPaymentEntity implements Serializable {
     @Column(name = "receipt")
     private String receipt;
     @OneToOne()
-    @JoinColumn(referencedColumnName="id", name="p_registry_id", insertable=true, updatable=true, nullable=false)
+    @JoinColumn(referencedColumnName="id", name="p_registry_id", nullable=false)
     private PRegistryEntity registry;
 
     @OneToOne()
-    @JoinColumn(referencedColumnName="id", name="p_service_id", insertable=true, updatable=true, nullable=false)
+    @JoinColumn(referencedColumnName="id", name="p_service_id", nullable=false)
     private PServiceEntity service;
 
     @OneToOne()
-    @JoinColumn(referencedColumnName="id", name="p_currency_id", insertable=true, updatable=true, nullable=false)
+    @JoinColumn(referencedColumnName="id", name="p_currency_id", nullable=false)
     private PCurrencyEntity currency;
 
     public Integer getId() {
@@ -170,22 +170,5 @@ public class PPaymentEntity implements Serializable {
         return Objects.hash(getId());
     }
 
-    @Override
-    public String toString() {
-        return "PPaymentModel{" +
-                "id=" + id +
-                ", code='" + code + '\'' +
-                ", description='" + description + '\'' +
-                ", invoice='" + invoice + '\'' +
-                ", piva='" + piva + '\'' +
-                ", pivaCode='" + pivaCode + '\'' +
-                ", paymentDate=" + paymentDate +
-                ", price=" + price +
-                ", receipt='" + receipt + '\'' +
-                ", registry=" + registry +
-                ", service=" + service +
-                ", currency=" + currency +
-                '}';
-    }
 
 }
