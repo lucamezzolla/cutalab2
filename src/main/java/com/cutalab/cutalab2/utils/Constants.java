@@ -108,6 +108,28 @@ public class Constants {
 
     //**************************************************************************************************************
 
+    //PAGAMENTI
+    public static final String PAYMENTS = "Pagamenti";
+    public static final String PAYMENTS_REGITRIES = "Anagrafiche";
+    public static final String PAYMENTS_SERVICES = "Servizi";
+    public static final String PAYMENTS_CURRENCIES = "Valute";
+    public static final String PAYMENTS_LOANS = "Prestiti";
+
+    public static final String PAYMENTS_REGISTRY_COLUMN_1 = "Nome";
+    public static final String PAYMENTS_NEW_REGISTRY = "Nuova anagrafica";
+    public static final String PAYMENTS_EDIT_REGISTRY = "Modifica anagrafica";
+    public static final String PAYMENTS_REMOVE_REGISTRY = "Sei sicuro di voler rimuovere quest'anagrafica?";
+
+    public static final String PAYMENTS_SERVICE_COLUMN_1 = "Nome";
+    public static final String PAYMENTS_NEW_SERVICE = "Nuovo servizio";
+    public static final String PAYMENTS_EDIT_SERVICE = "Modifica servizio";
+    public static final String PAYMENTS_REMOVE_SERVICE = "Sei sicuro di voler rimuovere questo servizio?";
+
+    public static final String PAYMENTS_CURRENCY_COLUMN_1 = "Nome";
+    public static final String PAYMENTS_NEW_CURRENCY = "Nuova valuta";
+    public static final String PAYMENTS_EDIT_CURRENCY = "Modifica valuta";
+    public static final String PAYMENTS_REMOVE_CURRENCY = "Sei sicuro di voler rimuovere questa valuta?";
+
 
     //NOTIFICHE
     public static final String DB_OPERATION_SUCCESS = "Operazione eseguita con successo.";

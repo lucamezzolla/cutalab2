@@ -9,10 +9,11 @@ import com.vaadin.flow.component.html.Label;
 
 public class ConfirmDialog extends Dialog {
 
+    private final Label label;
     private ConfirmDialogInterface confirmDialogListener;
 
     public ConfirmDialog() {
-        Label label = new Label(Constants.DISK_REMOVE_CONFIRMATION);
+        label = new Label(Constants.DISK_REMOVE_CONFIRMATION);
         add(label);
         getFooter().add(new Button(Constants.CANCEL, e -> close()));
         Button removeButton = new Button(Constants.REMOVE);
@@ -23,5 +24,9 @@ public class ConfirmDialog extends Dialog {
 
     public void setConfirmDialogListener(ConfirmDialogInterface confirmDialogListener) {
         this.confirmDialogListener = confirmDialogListener;
+    }
+
+    public void setLabel(String label) {
+        this.label.setText(label);
     }
 }

@@ -12,6 +12,7 @@ import com.cutalab.cutalab2.views.MainLayout;
 import com.cutalab.cutalab2.views.admin.aba.AdminABAView;
 import com.cutalab.cutalab2.views.admin.laboratory.AdminLaboratoryView;
 import com.cutalab.cutalab2.views.admin.links.AdminLinksView;
+import com.cutalab.cutalab2.views.admin.payments.AdminPayments;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.PageTitle;
@@ -25,12 +26,12 @@ import javax.annotation.security.RolesAllowed;
 public class AdminView extends VerticalLayout {
 
     public AdminView(LaboratoryAreaService laboratoryAreaService, LaboratoryService laboratoryService, LinkService linkService, AreaLinkService areaLinkService, ABAPackageService abaPackageService, ABASessionService abaSessionService, PaymentService paymentService) {
-        PaymentService paymentService1 = new PaymentService();
         TabSheet tabSheet = new TabSheet();
         tabSheet.setSizeFull();
-        tabSheet.add(Constants.ABA_TITLE, new AdminABAView(abaPackageService, abaSessionService, paymentService));
         tabSheet.add(Constants.MENU_LABORATORY, new AdminLaboratoryView(laboratoryService, laboratoryAreaService));
         tabSheet.add(Constants.MENU_LINKS, new AdminLinksView(areaLinkService, linkService));
+        tabSheet.add(Constants.PAYMENTS, new AdminPayments(paymentService));
+        tabSheet.add(Constants.ABA_TITLE, new AdminABAView(abaPackageService, abaSessionService, paymentService));
         add(tabSheet);
         setSizeFull();
     }

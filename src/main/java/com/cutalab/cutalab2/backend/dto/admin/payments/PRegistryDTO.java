@@ -1,7 +1,9 @@
 package com.cutalab.cutalab2.backend.dto.admin.payments;
 
+import com.cutalab.cutalab2.views.mycomponents.MyTextField;
+
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.*;
 
 public class PRegistryDTO implements Serializable {
 
@@ -30,6 +32,56 @@ public class PRegistryDTO implements Serializable {
     private String email;
 
     private String note;
+
+    private final LinkedList<MyTextField> fields = new LinkedList<>();
+
+    public LinkedList<MyTextField> getFields() {
+        fields.clear();
+        fields.add(new MyTextField(null, "Nome", "name", true));
+        fields.add(new MyTextField(null, "Indirizzo", "address", false));
+        fields.add(new MyTextField(null, "CAP", "cap", false));
+        fields.add(new MyTextField(null, "Città", "city", false));
+        fields.add(new MyTextField(null, "Provincia", "cityCode", false));
+        fields.add(new MyTextField(null, "Paese", "country", false));
+        fields.add(new MyTextField(null, "Email", "email", false));
+        fields.add(new MyTextField(null, "Codice fiscale", "fiscalCode", false));
+        fields.add(new MyTextField(null, "Cellulare", "mobile", false));
+        fields.add(new MyTextField(null, "Telefono", "phone", false));
+        fields.add(new MyTextField(null, "Partita IVA", "piva", false));
+        fields.add(new MyTextField(null, "Note", "note", false));
+        if(this.getId() != null && this.getId() > 0) {
+            ((MyTextField) fields.get(0)).setValue(this.getName());
+            ((MyTextField) fields.get(1)).setValue(this.getAddress());
+            ((MyTextField) fields.get(2)).setValue(this.getCap());
+            ((MyTextField) fields.get(3)).setValue(this.getCity());
+            ((MyTextField) fields.get(4)).setValue(this.getCityCode());
+            ((MyTextField) fields.get(5)).setValue(this.getCountry());
+            ((MyTextField) fields.get(6)).setValue(this.getEmail());
+            ((MyTextField) fields.get(7)).setValue(this.getFiscalCode());
+            ((MyTextField) fields.get(8)).setValue(this.getMobile());
+            ((MyTextField) fields.get(9)).setValue(this.getPhone());
+            ((MyTextField) fields.get(10)).setValue(this.getPiva());
+            ((MyTextField) fields.get(11)).setValue(this.getNote());
+        }
+        return fields;
+    }
+
+    public void setFields(LinkedList<MyTextField> fields) {
+        if(fields.size() == 12) {
+            this.setName(fields.get(0).getValue());
+            this.setAddress(fields.get(1).getValue());
+            this.setCap(fields.get(2).getValue());
+            this.setCity(fields.get(3).getValue());
+            this.setCityCode(fields.get(4).getValue());
+            this.setCountry(fields.get(5).getValue());
+            this.setEmail(fields.get(6).getValue());
+            this.setFiscalCode(fields.get(7).getValue());
+            this.setMobile(fields.get(8).getValue());
+            this.setPhone(fields.get(9).getValue());
+            this.setPiva(fields.get(10).getValue());
+            this.setNote(fields.get(11).getValue());
+        }
+    }
 
     public Integer getId() {
         return id;
