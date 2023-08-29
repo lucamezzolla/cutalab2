@@ -18,7 +18,6 @@ public class ContactsView extends VerticalLayout {
         H2 title = new H2(Constants.MENU_CONTACTS);
         Image image1 = new Image();
         Image image2 = new Image();
-        image1.addClassNames("contacts-image");
         image1.setSrc("images/luca.jpg");
         image2.setSrc("images/email.png");
         image1.addClassNames("contactsImages");
